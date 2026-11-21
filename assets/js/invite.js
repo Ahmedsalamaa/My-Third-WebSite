@@ -64,6 +64,7 @@
 
     // texts
     $$('[data-text]').forEach((el) => {
+      if (el.classList.contains('is-writing')) return;   // a title is writing itself right now
       const v = get(el.dataset.text);
       el.textContent = v == null ? '' : String(v);
       el.classList.toggle('is-off', !v && !el.closest('.countdown'));
@@ -793,7 +794,36 @@
     if (!io) { node.classList.add('in'); return; }
     io.observe(node);
   }
+  /* Section titles write themselves letter by letter when they come into view (like the original),
+   * then the line under them fades in. */
+  function writeTitle(el) {
+    if (el.dataset.written) return;
+    el.dataset.written = '1';
+    const full = el.textContent;
+    const chars = Array.from(full);
+    el.textContent = '';
+    el.classList.add('is-writing');
+    let i = 0;
+    const step = () => {
+      i++;
+      el.textContent = chars.slice(0, i).join('');
+      if (i < chars.length) setTimeout(step, 75);
+      else { el.classList.remove('is-writing'); el.classList.add('is-written'); }
+    };
+    setTimeout(step, 150);
+  }
+  function startTitles() {
+    const titles = $$('.title');
+    if (!('IntersectionObserver' in window) || reduceMotion) { titles.forEach((t) => t.classList.add('is-written')); return; }
+    titles.forEach((t) => t.classList.add('to-write'));
+    const tio = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { writeTitle(en.target); tio.unobserve(en.target); } });
+    }, { threshold: 0.6 });
+    titles.forEach((t) => tio.observe(t));
+  }
+
   function startReveal() {
+    startTitles();
     if (!('IntersectionObserver' in window) || reduceMotion) { $$('.reveal, .timeline li').forEach((e) => e.classList.add('in')); return; }
     io = new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
