@@ -15,9 +15,10 @@ window.INVITE_CONFIG = {
     "background": "#1c0508",
     "background2": "#3b0a12",
     "text": "#f4e6d6",
-    "scriptFont": "Cormorant Garamond",
+    "scriptFont": "Corinthia",
+    "namesStyle": "pearl",
     "bodyFont": "Cormorant Garamond",
-    "uiFont": "Cormorant SC"
+    "uiFont": "Gilda Display"
   },
   "music": {
     "enabled": true,
@@ -36,6 +37,7 @@ window.INVITE_CONFIG = {
     "glitterColor": "#c0121f",
     "curtainColor": "#8a0a18",
     "enableMic": true,
+    "autoMic": true,
     "micLabel": "Use microphone to blow",
     "video": ""
   },
@@ -47,7 +49,9 @@ window.INVITE_CONFIG = {
     "name1": "Ahmed",
     "ampersand": "&",
     "name2": "Sara",
-    "dateLine": "Wednesday, December 30, 2026",
+    "invite": "invite you to celebrate their wedding",
+    "dateLine": "30 12 2026",
+    "place": "Hayah Hall, Cairo",
     "scrollHint": "scroll down",
     "curtains": true,
     "beam": false,
