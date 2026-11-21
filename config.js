@@ -27,7 +27,7 @@ window.INVITE_CONFIG = {
   },
   "music": {
     "enabled": true,
-    "src": "assets/music/waltz.mp3",
+    "src": "assets/uploads/fmwqevuzomjazo.mp4",
     "volume": 0.6,
     "startAt": 0,
     "showButton": true
