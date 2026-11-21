@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link id="fontsLink" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Corinthia:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Gilda+Display&family=Albert+Sans:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/css/invite.css?v=20261121d">
+  <link rel="stylesheet" href="assets/css/invite.css?v=20261121e">
   <link rel="preload" as="image" href="assets/media/glitter.jpg">
 </head>
 <body class="is-locked">
@@ -108,12 +108,13 @@
           <div class="pad__head caps" data-text="event.padLabel"></div>
           <div class="pad__pages" id="pages"></div>
         </div>
+        <!-- appears under the calendar once the wedding month is reached (like the original) -->
+        <div class="when">
+          <p class="when__date" data-text="event.dateText"></p>
+          <p class="when__note" data-text="event.timeText"></p>
+          <button class="pill" id="addCal" type="button" data-text="event.calendarButton"></button>
+        </div>
       </div>
-    </section>
-    <section class="when" data-section="event">
-      <p class="when__date" data-text="event.dateText"></p>
-      <p class="when__note" data-text="event.timeText"></p>
-      <button class="pill" id="addCal" type="button" data-text="event.calendarButton"></button>
     </section>
 
     <!-- ============ THE EVENING ============ -->
@@ -205,7 +206,7 @@
 
   <!-- config.js is always loaded fresh so published changes show at once -->
   <script>document.write('<script src="config.js?t=' + Date.now() + '"><\/script>');</script>
-  <script src="assets/js/store.js?v=20261121d"></script>
-  <script src="assets/js/invite.js?v=20261121d"></script>
+  <script src="assets/js/store.js?v=20261121e"></script>
+  <script src="assets/js/invite.js?v=20261121e"></script>
 </body>
 </html>
