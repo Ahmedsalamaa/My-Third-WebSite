@@ -509,7 +509,14 @@
 
   async function publish(log, btn) {
     const gh = ghSettings();
-    if (!gh.owner || !gh.repo || !gh.token) { toast('Fill in the GitHub settings below first.', true); current = 'publish'; renderEditor(); updateNav(); return; }
+    if (!gh.owner || !gh.repo || !gh.token) {
+      const missing = !gh.token ? 'token' : !gh.owner ? 'owner' : 'repo';
+      toast(missing === 'token' ? 'Paste your GitHub access token first (step 1 shows how to get one).' : 'Fill in your GitHub user and repository first.', true);
+      current = 'publish'; renderEditor(); updateNav();
+      const f = document.getElementById('gh_' + missing);
+      if (f) { f.scrollIntoView({ block: 'center' }); f.focus(); f.style.borderColor = 'var(--err)'; }
+      return;
+    }
     btn.disabled = true;
     const say = (m) => { log.textContent += m + '\n'; log.scrollTop = log.scrollHeight; };
     log.textContent = '';
@@ -558,8 +565,10 @@
       el('div', { class: 'card' },
         el('h3', {}, 'Publish online (GitHub Pages)'),
         el('ol', { class: 'steps' },
-          el('li', {}, 'On GitHub open ', el('b', {}, 'Settings → Developer settings → Personal access tokens → Fine-grained tokens'), ' and create a token for this repository with ', el('b', {}, 'Contents: Read and write'), '.'),
-          el('li', {}, 'Paste it below together with your user name, repository and branch.'),
+          el('li', {}, 'Create a token: tap ', el('a', { href: 'https://github.com/settings/personal-access-tokens/new', target: '_blank', rel: 'noopener' }, 'Create GitHub token ↗'),
+            '. Give it any name, set an expiration, choose ', el('b', {}, 'Only select repositories → ' + (ghSettings().repo || 'your repository')),
+            ', then under ', el('b', {}, 'Repository permissions → Contents'), ' choose ', el('b', {}, 'Read and write'), '. Tap ', el('b', {}, 'Generate token'), ' and copy it.'),
+          el('li', {}, 'Paste it into the ', el('b', {}, 'Access token'), ' box below (you only need to do this once on this phone).'),
           el('li', {}, 'Press ', el('b', {}, 'Publish'), '. Your photos, music and texts are committed to the repository and the live invitation updates.')),
         el('div', { class: 'fields', style: 'margin-top:14px' },
           inp('owner', 'GitHub user / organization', { placeholder: 'e.g. ahmedsalamaa' }),
