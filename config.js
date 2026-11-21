@@ -111,7 +111,7 @@ window.INVITE_CONFIG = {
   "venue": {
     "enabled": true,
     "title": "Where",
-    "image": "assets/media/venue.jpg",
+    "image": "assets/uploads/fmwqf9pzgwotzi.jpg",
     "name": "Mirage Hall",
     "address": "Transportation Officers House, Nile Corniche\n— in front of Mohamed Ali Palace",
     "button": "Get directions",
