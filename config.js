@@ -47,6 +47,7 @@ window.INVITE_CONFIG = {
     "enableMic": true,
     "autoMic": true,
     "micLabel": "Use microphone to blow",
+    "micTapLabel": "Tap here, then blow",
     "video": "assets/media/film.mp4",
     "namesAt": 3
   },

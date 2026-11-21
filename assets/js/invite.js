@@ -574,59 +574,101 @@
 
   /* ---------------- blow detection ---------------- */
   let mic = null;
+  /* Listening for a blow.
+   * iPhone only lets a page hear the microphone after one touch, so if the audio
+   * engine stays paused we show a small "Tap here, then blow" button.
+   * The detector first learns how quiet the room is, then reacts to a breath:
+   * either the sound level clearly above the room, or the spectrum rising above it. */
+  let ac = null, micStream = null, analyser = null, listening = false;
   async function startMic(e) {
     if (e) { e.stopPropagation(); unlockAudio(); }
     const btn = $('#micBtn');
-    if (mic) return;
-    micState = 'asking'; setCoverText();
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
-      if (opened) { stream.getTracks().forEach((t) => t.stop()); return; }
-      const ac = new (window.AudioContext || window.webkitAudioContext)();
-      if (ac.state === 'suspended') {
-        ac.resume().catch(() => {});
-        // some browsers only allow listening after a first touch
-        const wake = () => ac.resume().catch(() => {});
-        ['pointerdown', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, wake, { once: true, passive: true }));
-      }
-      const src = ac.createMediaStreamSource(stream);
-      const an = ac.createAnalyser(); an.fftSize = 1024;
-      src.connect(an);
-      const freq = new Uint8Array(an.frequencyBinCount);
-      mic = { stream, ac };
-      btn.classList.add('is-listening');
-      btn.hidden = true;
-      micState = 'listening';
-      setCoverText();
-      const fill = $('#meterFill');
-      let loud = 0, last = performance.now();
-      const loop = (now) => {
-        if (!mic) return;
-        an.getByteFrequencyData(freq);
-        // blowing = loud noise spread over MANY frequencies (a voice or a tone fills only a few)
-        let sum = 0, wide = 0; const from = 2, to = 64;
-        for (let i = from; i <= to; i++) { sum += freq[i]; if (freq[i] > 140) wide++; }
-        const level = sum / (to - from + 1) / 255;
-        const spread = wide / (to - from + 1);
-        const blowing = level > 0.5 && spread > 0.7;
-        loud = blowing ? loud + (now - last) : Math.max(0, loud - (now - last) * 2);
-        last = now;
-        fill.style.width = Math.min(100, Math.max(level * 60, loud / 160 * 100)) + '%';
-        if (loud > 160) { open(); return; }
-        requestAnimationFrame(loop);
-      };
-      requestAnimationFrame(loop);
-    } catch (err) {
-      btn.hidden = true;
-      micState = 'off';
-      setCoverText();
+    if (listening || opened) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) { micFailed(); return; }
+    if (!ac) { try { ac = new AC(); } catch (err) { micFailed(); return; } }
+    if (ac.state !== 'running') ac.resume().catch(() => {});
+    if (!micStream) {
+      micState = 'asking'; setCoverText();
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      } catch (err) { micFailed(); return; }
+      if (opened) { micStream.getTracks().forEach((t) => t.stop()); return; }
+      const src = ac.createMediaStreamSource(micStream);
+      analyser = ac.createAnalyser(); analyser.fftSize = 1024; analyser.smoothingTimeConstant = 0.3;
+      src.connect(analyser);
+      mic = { stream: micStream, ac };
     }
+    if (ac.state === 'running') { beginListening(); return; }
+    ac.resume().then(() => { if (ac && ac.state === 'running') beginListening(); }).catch(() => {});
+    // still paused (iPhone): ask for one tap on the button
+    setTimeout(() => {
+      if (listening || opened) return;
+      btn.querySelector('span').textContent = get('intro.micTapLabel') || 'Tap here, then blow';
+      btn.hidden = false;
+      micState = 'asking'; setCoverText();
+    }, 700);
   }
+
+  function micFailed() {
+    $('#micBtn').hidden = true;
+    micState = 'off';
+    setCoverText();
+  }
+
+  function beginListening() {
+    if (listening || opened || !analyser) return;
+    listening = true;
+    const btn = $('#micBtn');
+    btn.hidden = true;
+    micState = 'listening';
+    setCoverText();
+    const fill = $('#meterFill');
+    const time = new Uint8Array(analyser.fftSize);
+    const freq = new Float32Array(analyser.frequencyBinCount);
+    const base = new Float32Array(freq.length);
+    const top = Math.min(freq.length, Math.round(4500 / (ac.sampleRate / 2) * freq.length)); // up to 4.5 kHz
+    const quiet = [];
+    let samples = 0, floor = 0, meter = 0, last = performance.now();
+    const warmUntil = performance.now() + 500;   // microphones need a moment to wake up
+    const db = (v) => Math.max(-140, isFinite(v) ? v : -140);
+
+    const loop = (now) => {
+      if (!listening || opened) return;
+      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      analyser.getByteTimeDomainData(time);
+      let sq = 0;
+      for (let i = 0; i < time.length; i++) { const v = (time[i] - 128) / 128; sq += v * v; }
+      const rms = Math.sqrt(sq / time.length);
+      analyser.getFloatFrequencyData(freq);
+
+      if (now < warmUntil) { requestAnimationFrame(loop); return; }
+      if (samples < 20) {                       // learn the room for a moment
+        for (let k = 1; k < top; k++) base[k] = (base[k] * samples + db(freq[k])) / (samples + 1);
+        quiet.push(rms);
+        floor = quiet.slice().sort((x, y) => x - y)[quiet.length >> 1];
+        samples++;
+        requestAnimationFrame(loop);
+        return;
+      }
+      let rise = 0;
+      for (let k = 1; k < top; k++) rise += Math.max(0, db(freq[k]) - base[k]);
+      rise /= Math.max(1, top - 1);
+      const blowing = rise > 7 || rms > Math.max(0.012, floor * 2.2);
+      if (rise < 3) for (let k = 1; k < top; k++) base[k] = base[k] * 0.97 + db(freq[k]) * 0.03; // room slowly re-learned
+      meter = Math.max(0, Math.min(1, meter + (blowing ? dt / 0.15 : -dt * 0.8)));
+      fill.style.width = (meter * 100) + '%';
+      if (meter >= 1) { open(); return; }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
   function stopMic() {
-    if (!mic) return;
-    mic.stream.getTracks().forEach((t) => t.stop());
-    mic.ac.close().catch(() => {});
-    mic = null;
+    listening = false;
+    try { if (micStream) micStream.getTracks().forEach((t) => t.stop()); } catch (e) { /* ignore */ }
+    try { if (ac) ac.close(); } catch (e) { /* ignore */ }
+    micStream = null; ac = null; analyser = null; mic = null;
   }
 
   /* ---------------- opening sequence ---------------- */
@@ -847,7 +889,7 @@
       // start listening for a blow as soon as the page opens
       if (get('intro.enableMic') && get('intro.autoMic') !== false && !IS_PREVIEW && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.isSecureContext) {
         $('#micBtn').hidden = true;
-        startMic().then(() => { if (!mic && !opened) $('#micBtn').hidden = true; });
+        startMic();
       }
       setTimeout(() => cover.focus({ preventScroll: true }), 50);
     }
