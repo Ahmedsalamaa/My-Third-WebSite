@@ -100,6 +100,10 @@
     $('#beam').classList.toggle('on', !!get('hero.beam'));
     $('#ring').classList.toggle('on', !!get('hero.ring'));
 
+    $('#until').classList.toggle('has-curtain', get('closing.curtainBackdrop') !== false);
+    $('#env').classList.toggle('no-env', !get('letter.envelope'));
+    updateLetter();
+
     // save the date: calendar pages
     buildFlip();
     tickCountdown();
@@ -200,6 +204,7 @@
     ctx.fillStyle = g; ctx.fillRect(W - 40, 0, 40, H);
     curtainUrl = c.toDataURL('image/jpeg', 0.9);
     $$('.curtain__tex').forEach((el) => { el.style.backgroundImage = `url("${curtainUrl}")`; });
+    $('#until').style.setProperty('--curtain-url', `url("${curtainUrl}")`);
   }
 
   /* ---------------- typewriter for the names ---------------- */
@@ -246,10 +251,51 @@
     return n;
   }
 
+  let micState = 'off'; // off | asking | listening
   function setCoverText() {
-    const blow = !!mic;
+    const blow = micState !== 'off';
     $('#coverAction').textContent = get(blow ? 'intro.action' : 'intro.touchAction') || get('intro.action') || '';
-    $('#coverAlt').textContent = get(blow ? 'intro.actionAlt' : 'intro.touchActionAlt') || '';
+    $('#coverAlt').textContent = micState === 'listening'
+      ? (get('intro.breathHint') || get('intro.actionAlt') || '')
+      : (get(blow ? 'intro.actionAlt' : 'intro.touchActionAlt') || '');
+    $('#meter').hidden = micState !== 'listening';
+  }
+
+  /* ---------------- letter rises out of the envelope while scrolling ---------------- */
+  function updateLetter() {
+    const sec = $('#letter'), card = $('#letterCard');
+    if (!sec || sec.classList.contains('is-off')) return;
+    if (!get('letter.envelope')) { card.style.transform = ''; return; }
+    const r = sec.getBoundingClientRect();
+    const span = sec.offsetHeight - innerHeight;
+    const p = Math.max(0, Math.min(1, (innerHeight * 0.5 - r.top) / Math.max(1, span + innerHeight * 0.5)));
+    const e = 1 - Math.pow(1 - p, 2);
+    const h = card.offsetHeight;
+    // start mostly inside the pocket, end lifted out above it
+    card.style.transform = `translateY(${(0.42 - e * 0.95) * h}px)`;
+  }
+  addEventListener('scroll', () => requestAnimationFrame(updateLetter), { passive: true });
+  addEventListener('resize', updateLetter);
+
+  /* ---------------- lace edges + embossed oval on paper sections ---------------- */
+  function decoratePaper() {
+    $$('.paper-sec').forEach((sec) => {
+      if (sec.querySelector('.lace')) return;
+      sec.prepend(el('div', 'lace lace--top'));
+      sec.append(el('div', 'lace lace--bottom'));
+      sec.insertAdjacentHTML('afterbegin',
+        '<svg class="emboss" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
+        '<defs><filter id="emb' + Math.random().toString(36).slice(2, 6) + '"></filter></defs>' +
+        '<ellipse cx="200" cy="350" rx="176" ry="318" fill="none" stroke="#fffdf8" stroke-width="3" transform="translate(-1.2 -1.2)"/>' +
+        '<ellipse cx="200" cy="350" rx="176" ry="318" fill="none" stroke="#cbbcaa" stroke-width="3" transform="translate(1.2 1.2)" opacity="1"/>' +
+        '<ellipse cx="200" cy="350" rx="176" ry="318" fill="none" stroke="#efe6da" stroke-width="3"/>' +
+        '<ellipse cx="200" cy="350" rx="164" ry="305" fill="none" stroke="#fffdf8" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 11" transform="translate(-1 -1)"/>' +
+        '<ellipse cx="200" cy="350" rx="164" ry="305" fill="none" stroke="#d6c9ba" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 11" transform="translate(1 1)" opacity=".75"/>' +
+        '<ellipse cx="200" cy="350" rx="164" ry="305" fill="none" stroke="#f1e9de" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 11"/>' +
+        '<ellipse cx="200" cy="350" rx="152" ry="292" fill="none" stroke="#fffdf8" stroke-width="1.6" transform="translate(-1 -1)"/>' +
+        '<ellipse cx="200" cy="350" rx="152" ry="292" fill="none" stroke="#dcd0c2" stroke-width="1.6" transform="translate(1 1)" opacity=".7"/>' +
+        '</svg>');
+    });
   }
 
   /* ---------------- Save the date: pages that turn while scrolling ---------------- */
@@ -504,6 +550,7 @@
     if (e) { e.stopPropagation(); unlockAudio(); }
     const btn = $('#micBtn');
     if (mic) return;
+    micState = 'asking'; setCoverText();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
       if (opened) { stream.getTracks().forEach((t) => t.stop()); return; }
@@ -521,7 +568,9 @@
       mic = { stream, ac };
       btn.classList.add('is-listening');
       btn.hidden = true;
+      micState = 'listening';
       setCoverText();
+      const fill = $('#meterFill');
       let loud = 0, last = performance.now();
       const loop = (now) => {
         if (!mic) return;
@@ -534,12 +583,14 @@
         const blowing = level > 0.5 && spread > 0.7;
         loud = blowing ? loud + (now - last) : Math.max(0, loud - (now - last) * 2);
         last = now;
+        fill.style.width = Math.min(100, Math.max(level * 60, loud / 160 * 100)) + '%';
         if (loud > 160) { open(); return; }
         requestAnimationFrame(loop);
       };
       requestAnimationFrame(loop);
     } catch (err) {
       btn.hidden = true;
+      micState = 'off';
       setCoverText();
     }
   }
@@ -743,6 +794,7 @@
       try { config = await S.resolveMedia(await S.loadDraft()); } catch (e) { /* fall back to published */ }
     }
     startReveal();
+    decoratePaper();
     apply(config);
 
     $('#addCal').addEventListener('click', downloadIcs);
