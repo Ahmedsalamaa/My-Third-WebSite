@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Invitation Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,500&display=swap">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="brand__mark">♥</span>
+      <div>
+        <h1>Invitation Dashboard</h1>
+        <p class="status" id="status">Loading…</p>
+      </div>
+    </div>
+    <div class="top__actions">
+      <button class="btn btn--ghost only-mobile" id="togglePreview" type="button">Preview</button>
+      <button class="btn btn--ghost" id="replayIntro" type="button" title="Play the opening animation again">↻ Replay opening</button>
+      <a class="btn btn--ghost" href="index.html?preview" target="_blank" rel="noopener">Open preview ↗</a>
+      <button class="btn btn--primary" id="publishTop" type="button">Publish</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="nav" id="nav" aria-label="Sections"></nav>
+
+    <main class="editor" id="editor" tabindex="-1"></main>
+
+    <aside class="preview" id="previewPane" aria-label="Live preview">
+      <div class="phone">
+        <div class="phone__notch"></div>
+        <iframe id="previewFrame" title="Invitation preview" src="index.html?preview&amp;skipIntro"></iframe>
+      </div>
+      <p class="preview__note">Live preview · changes are saved automatically in this browser.<br>Press <b>Publish</b> to put them online for your guests.</p>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

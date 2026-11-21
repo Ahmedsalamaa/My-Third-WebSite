@@ -1,0 +1,617 @@
+/* ==========================================================
+   Velvet Glitter Invitation — behaviour
+   ========================================================== */
+(function () {
+  'use strict';
+  const S = window.InviteStore;
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const params = new URLSearchParams(location.search);
+  const IS_PREVIEW = params.has('preview');
+  const SKIP_INTRO = params.has('skipIntro');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  let cfg = null;
+  let opened = false;
+  const audio = $('#music');
+
+  /* ---------------- helpers ---------------- */
+  const get = (path) => S.getPath(cfg, path);
+  const hasArabic = (s) => /[֐-ࣿ]/.test(s || '');
+  const rand = (a, b) => a + Math.random() * (b - a);
+  function eventDate() {
+    const d = new Date(get('event.datetime') || '');
+    return isNaN(d) ? null : d;
+  }
+  function hexToRgb(hex) {
+    const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex || '');
+    return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [192, 18, 31];
+  }
+
+  /* ---------------- apply config to the page ---------------- */
+  function apply(config) {
+    cfg = config;
+    const root = document.documentElement;
+    const t = cfg.theme || {};
+
+    // language / direction / meta
+    root.lang = get('meta.lang') || 'en';
+    root.dir = get('meta.dir') || (hasArabic(get('hero.name1')) ? 'rtl' : 'ltr');
+    document.title = get('meta.title') || 'Invitation';
+    const md = $('meta[name="description"]'); if (md) md.content = get('meta.description') || '';
+    const og = $('meta[property="og:image"]'); if (og && get('hero.stageImage') && !get('hero.stageImage').startsWith('blob:')) og.content = get('hero.stageImage');
+
+    // theme
+    const vars = { '--accent': t.accent, '--accent2': t.accent2, '--bg': t.background, '--bg2': t.background2, '--text': t.text, '--glitter': get('intro.glitterColor') };
+    for (const k in vars) if (vars[k]) root.style.setProperty(k, vars[k]);
+    root.style.setProperty('--script', `"${t.scriptFont}", "Cormorant Garamond", serif`);
+    root.style.setProperty('--body', `"${t.bodyFont}", "Cormorant Garamond", serif`);
+    root.style.setProperty('--ui', `"${t.uiFont}", "${t.bodyFont}", serif`);
+    const sf = S.FONTS[t.scriptFont];
+    root.style.setProperty('--script-style', sf && !sf.italic ? 'normal' : 'italic');
+    const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont]);
+    if ($('#fontsLink').href !== furl) $('#fontsLink').href = furl;
+    const tc = $('meta[name="theme-color"]'); if (tc) tc.content = t.background || '#1c0508';
+    const g1 = $('#goldG .g1'), g2 = $('#goldG .g2');
+    if (g1) g1.setAttribute('stop-color', t.accent || '#e9c58f');
+    if (g2) g2.setAttribute('stop-color', t.accent2 || '#b8864b');
+
+    // texts
+    $$('[data-text]').forEach((el) => {
+      const v = get(el.dataset.text);
+      el.textContent = v == null ? '' : String(v);
+      el.classList.toggle('is-off', !v && !el.closest('.countdown'));
+    });
+    $$('[data-ph]').forEach((el) => { el.placeholder = get(el.dataset.ph) || ''; });
+    $$('[data-letters]').forEach((el) => splitLetters(el, get(el.dataset.letters) || ''));
+    // images
+    $$('[data-src]').forEach((el) => {
+      const v = get(el.dataset.src);
+      if (v) { if (el.getAttribute('src') !== v) el.src = v; el.classList.remove('is-off'); }
+      else { el.removeAttribute('src'); el.classList.add('is-off'); }
+    });
+    $$('[data-bg]').forEach((el) => {
+      const v = get(el.dataset.bg);
+      el.style.backgroundImage = v ? `url("${v}")` : 'none';
+    });
+    $$('[data-bg-velvet]').forEach((el) => { el.style.backgroundImage = 'url("assets/media/velvet.jpg")'; });
+    const vf = $('.venue__frame'); if (vf) vf.classList.toggle('is-off', !get('venue.image'));
+
+    // sections on/off
+    $$('[data-section]').forEach((el) => {
+      const on = get(el.dataset.section + '.enabled');
+      el.classList.toggle('is-off', on === false);
+    });
+
+    // hero options
+    $('#stageImg').style.objectPosition = get('hero.imagePosition') || '50% 70%';
+    document.body.classList.toggle('no-curtains', get('hero.curtains') === false);
+    $('#beam').classList.toggle('on', !!get('hero.beam'));
+    $('#ring').classList.toggle('on', !!get('hero.ring'));
+
+    // event
+    $('#countdown').classList.toggle('is-off', get('event.showCountdown') === false);
+    $('#calendar').classList.toggle('is-off', get('event.showCalendar') === false);
+    buildCalendar();
+    tickCountdown();
+
+    // schedule
+    const tl = $('#timeline');
+    tl.innerHTML = '';
+    (get('schedule.items') || []).forEach((it) => {
+      const li = document.createElement('li');
+      li.className = 'reveal in';
+      const tm = document.createElement('time'); tm.textContent = it.time || '';
+      const box = document.createElement('div');
+      const b = document.createElement('b'); b.textContent = it.title || '';
+      const sp = document.createElement('span'); sp.textContent = it.text || '';
+      box.append(b, sp); li.append(tm, box); tl.append(li);
+    });
+
+    // venue
+    const maps = $('#mapsBtn');
+    const mu = get('venue.mapsUrl');
+    if (mu) { maps.href = mu; maps.classList.remove('is-off'); } else maps.classList.add('is-off');
+
+    // rsvp
+    $('#guestsField').classList.toggle('is-off', !get('rsvp.askGuests'));
+
+    // intro
+    const canMic = get('intro.enableMic') && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.isSecureContext;
+    $('#micBtn').hidden = !canMic;
+
+    // music
+    const src = get('music.src');
+    if (get('music.enabled') !== false && src) {
+      if (audio.getAttribute('src') !== src) { audio.src = src; if (opened) playMusic(); }
+    } else {
+      audio.pause(); audio.removeAttribute('src');
+    }
+    audio.volume = Math.max(0, Math.min(1, Number(get('music.volume') ?? 0.6)));
+    $('#musicBtn').hidden = !opened || !src || get('music.enabled') === false || get('music.showButton') === false;
+
+    buildSunRays();
+    if (glitter) glitter.recolor();
+  }
+
+  function splitLetters(el, text) {
+    if (el.dataset.value === text) return;
+    el.dataset.value = text;
+    el.textContent = '';
+    // Arabic letters must stay joined: animate whole words instead of letters.
+    const parts = hasArabic(text) ? text.split(/(\s+)/) : Array.from(text);
+    let i = 0;
+    parts.forEach((p) => {
+      const s = document.createElement('span');
+      s.className = 'l';
+      s.textContent = p === ' ' ? ' ' : p;
+      s.style.animationDelay = (el === $$('[data-letters]')[1] ? 1.1 : 0.35) + i++ * 0.09 + 's';
+      el.append(s);
+    });
+  }
+
+  function buildSunRays() {
+    const g = $('.sun__rays');
+    if (!g || g.childElementCount) return;
+    for (let i = 0; i < 24; i++) {
+      const a = (i / 24) * Math.PI * 2;
+      const r1 = 26, r2 = i % 2 ? 44 : 56;
+      const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      l.setAttribute('x1', 60 + Math.cos(a) * r1); l.setAttribute('y1', 60 + Math.sin(a) * r1);
+      l.setAttribute('x2', 60 + Math.cos(a) * r2); l.setAttribute('y2', 60 + Math.sin(a) * r2);
+      g.append(l);
+    }
+  }
+
+  /* ---------------- calendar & countdown ---------------- */
+  function buildCalendar() {
+    const d = eventDate();
+    const grid = $('#calGrid');
+    grid.innerHTML = '';
+    if (!d) return;
+    const lang = get('meta.lang') || 'en';
+    const y = d.getFullYear(), m = d.getMonth();
+    let title;
+    try { title = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(d); } catch (e) { title = d.toDateString(); }
+    $('#calTitle').textContent = title;
+    const monStart = get('event.weekStartsMonday') !== false;
+    const ar = lang.startsWith('ar');
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(2024, 0, (monStart ? 1 : 7) + i); // 1 Jan 2024 = Monday
+      let n;
+      try { n = new Intl.DateTimeFormat(lang, { weekday: ar ? 'narrow' : 'short' }).format(day); } catch (e) { n = ''; }
+      const c = document.createElement('div'); c.className = 'wd'; c.textContent = ar ? n : n.slice(0, 2);
+      grid.append(c);
+    }
+    const first = new Date(y, m, 1).getDay(); // 0 = Sunday
+    const offset = monStart ? (first + 6) % 7 : first;
+    const days = new Date(y, m + 1, 0).getDate();
+    for (let i = 0; i < offset; i++) grid.append(document.createElement('div'));
+    let nf; try { nf = new Intl.NumberFormat(lang); } catch (e) { nf = { format: String }; }
+    for (let i = 1; i <= days; i++) {
+      const c = document.createElement('div');
+      c.className = 'd' + (i === d.getDate() ? ' is-day' : '');
+      c.textContent = nf.format(i);
+      grid.append(c);
+    }
+  }
+
+  function tickCountdown() {
+    const d = eventDate();
+    let diff = d ? Math.max(0, d - Date.now()) : 0;
+    const days = Math.floor(diff / 864e5); diff -= days * 864e5;
+    const h = Math.floor(diff / 36e5); diff -= h * 36e5;
+    const mi = Math.floor(diff / 6e4); diff -= mi * 6e4;
+    const s = Math.floor(diff / 1e3);
+    let nf; try { nf = new Intl.NumberFormat((cfg && get('meta.lang')) || 'en'); } catch (e) { nf = { format: String }; }
+    $('#cdD').textContent = nf.format(days);
+    $('#cdH').textContent = nf.format(h);
+    $('#cdM').textContent = nf.format(mi);
+    $('#cdS').textContent = nf.format(s);
+  }
+  setInterval(() => cfg && tickCountdown(), 1000);
+
+  function downloadIcs() {
+    const d = eventDate();
+    if (!d) return;
+    const end = new Date(d.getTime() + (Number(get('event.durationHours')) || 4) * 36e5);
+    const f = (x) => x.getFullYear() + String(x.getMonth() + 1).padStart(2, '0') + String(x.getDate()).padStart(2, '0') + 'T' + String(x.getHours()).padStart(2, '0') + String(x.getMinutes()).padStart(2, '0') + '00';
+    const esc = (s) => String(s || '').replace(/[\\;,]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
+    const names = [get('hero.name1'), get('hero.name2')].filter(Boolean).join(' & ');
+    const ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Invitation//EN', 'BEGIN:VEVENT',
+      'UID:' + Date.now() + '@invitation', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+      'DTSTART:' + f(d), 'DTEND:' + f(end),
+      'SUMMARY:' + esc(get('meta.title') || names),
+      'LOCATION:' + esc([get('venue.name'), get('venue.address')].filter(Boolean).join(', ')),
+      'DESCRIPTION:' + esc(location.href.split('?')[0]),
+      'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(names), 'END:VALARM',
+      'END:VEVENT', 'END:VCALENDAR'
+    ].join('\r\n');
+    const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+    const a = document.createElement('a');
+    a.href = url; a.download = (names || 'invitation').replace(/[^\w؀-ۿ]+/g, '-') + '.ics';
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  /* ---------------- music ---------------- */
+  let fadeTimer = null;
+  function playMusic() {
+    if (!audio.getAttribute('src') || get('music.enabled') === false) return;
+    const target = Math.max(0, Math.min(1, Number(get('music.volume') ?? 0.6)));
+    if (audio.paused && audio.currentTime < 0.05) audio.currentTime = Number(get('music.startAt')) || 0;
+    audio.volume = 0;
+    const p = audio.play();
+    if (p && p.catch) p.catch(() => setMusicUi());
+    clearInterval(fadeTimer);
+    fadeTimer = setInterval(() => {
+      audio.volume = Math.min(target, audio.volume + target / 30);
+      if (audio.volume >= target) clearInterval(fadeTimer);
+    }, 70);
+    setMusicUi();
+  }
+  function setMusicUi() {
+    const b = $('#musicBtn');
+    b.classList.toggle('is-paused', audio.paused);
+    b.setAttribute('aria-label', audio.paused ? 'Play music' : 'Pause music');
+  }
+  let userPaused = false;
+  $('#musicBtn').addEventListener('click', () => {
+    if (audio.paused) { userPaused = false; playMusic(); } else { userPaused = true; audio.pause(); }
+    setMusicUi();
+  });
+  audio.addEventListener('play', setMusicUi);
+  audio.addEventListener('pause', setMusicUi);
+  document.addEventListener('visibilitychange', () => {
+    if (!opened) return;
+    if (document.hidden) audio.pause();
+    else if (!userPaused) playMusic();
+  });
+  // iOS only allows sound after a gesture: unlock it on the first touch.
+  function unlockAudio() {
+    if (!audio.getAttribute('src')) return;
+    audio.muted = true;
+    const p = audio.play();
+    const done = () => { audio.pause(); audio.muted = false; };
+    if (p && p.then) p.then(done).catch(() => { audio.muted = false; }); else done();
+  }
+
+  /* ---------------- glitter cover ---------------- */
+  let glitter = null;
+  function Glitter(canvas) {
+    const ctx = canvas.getContext('2d');
+    let w = 0, h = 0, parts = [], falling = false, fallStart = 0, raf = 0, palette = [];
+    function makePalette() {
+      const [r, g, b] = hexToRgb(get('intro.glitterColor'));
+      const mix = (k, t) => [r + (k[0] - r) * t, g + (k[1] - g) * t, b + (k[2] - b) * t].map((x) => Math.round(Math.max(0, Math.min(255, x))));
+      palette = [
+        mix([255, 255, 255], .2), mix([255, 255, 255], .45), mix([255, 220, 220], .75),
+        mix([0, 0, 0], .35), mix([0, 0, 0], .1), [r, g, b], [255, 250, 245]
+      ].map((c) => `rgb(${c[0]},${c[1]},${c[2]})`);
+    }
+    function resize() {
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = Math.round(w * DPR); canvas.height = Math.round(h * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      const n = Math.min(7000, Math.round((w * h) / 62));
+      parts = [];
+      for (let i = 0; i < n; i++) {
+        const big = Math.random() < 0.06;
+        parts.push({
+          x: Math.random() * w, y: Math.random() * h,
+          r: big ? rand(1.4, 2.6) : rand(0.5, 1.5),
+          c: big ? (Math.random() < .5 ? 6 : 2) : Math.floor(Math.random() * 6),
+          a: rand(.45, 1), ph: Math.random() * 6.28, sp: rand(1.2, 4.5),
+          vx: 0, vy: 0, delay: 0, spin: rand(-1, 1)
+        });
+      }
+    }
+    function frame(now) {
+      const t = now / 1000;
+      ctx.clearRect(0, 0, w, h);
+      let alive = 0;
+      const ft = falling ? (now - fallStart) / 1000 : 0;
+      for (const p of parts) {
+        let x = p.x, y = p.y, a;
+        if (falling) {
+          const lt = ft - p.delay;
+          if (lt > 0) {
+            x = p.x + p.vx * lt + Math.sin(lt * 6 + p.ph) * 4 * p.spin;
+            y = p.y + 0.5 * p.vy * lt * lt;
+            if (y > h + 10) continue;
+          }
+          a = p.a * (0.6 + 0.4 * Math.sin(t * p.sp * 2 + p.ph));
+        } else {
+          a = p.a * (0.35 + 0.65 * Math.max(0, Math.sin(t * p.sp + p.ph)));
+        }
+        alive++;
+        ctx.globalAlpha = a;
+        ctx.fillStyle = palette[p.c];
+        ctx.fillRect(x, y, p.r, p.r);
+        if (p.r > 1.6 && a > .85) { // tiny star glint
+          ctx.globalAlpha = (a - .85) * 4;
+          ctx.fillRect(x - p.r * 1.6, y + p.r / 2 - .3, p.r * 4.2, .6);
+          ctx.fillRect(x + p.r / 2 - .3, y - p.r * 1.6, .6, p.r * 4.2);
+        }
+      }
+      ctx.globalAlpha = 1;
+      if (falling && alive === 0) { stop(); return; }
+      raf = requestAnimationFrame(frame);
+    }
+    function start() { cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); }
+    function stop() { cancelAnimationFrame(raf); ctx.clearRect(0, 0, w, h); }
+    function fall() {
+      falling = true; fallStart = performance.now();
+      for (const p of parts) {
+        p.delay = Math.random() * 0.55 + (1 - p.y / h) * 0.25;
+        p.vy = rand(900, 2600);
+        p.vx = rand(-30, 30);
+      }
+    }
+    makePalette(); resize(); start();
+    let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!falling) resize(); }, 150); });
+    return { fall, stop, recolor: makePalette };
+  }
+
+  /* ---------------- blow detection ---------------- */
+  let mic = null;
+  async function startMic(e) {
+    e.stopPropagation();
+    unlockAudio();
+    const btn = $('#micBtn');
+    if (mic) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      const src = ac.createMediaStreamSource(stream);
+      const an = ac.createAnalyser(); an.fftSize = 1024;
+      src.connect(an);
+      const freq = new Uint8Array(an.frequencyBinCount);
+      mic = { stream, ac };
+      btn.classList.add('is-listening');
+      let loud = 0, last = performance.now();
+      const loop = (now) => {
+        if (!mic) return;
+        an.getByteFrequencyData(freq);
+        // blowing = strong, broad low-frequency noise
+        let sum = 0; const bins = 40;
+        for (let i = 1; i <= bins; i++) sum += freq[i];
+        const level = sum / bins / 255;
+        loud = level > 0.42 ? loud + (now - last) : Math.max(0, loud - (now - last) * 2);
+        last = now;
+        if (loud > 160) { open(); return; }
+        requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    } catch (err) {
+      btn.hidden = true;
+    }
+  }
+  function stopMic() {
+    if (!mic) return;
+    mic.stream.getTracks().forEach((t) => t.stop());
+    mic.ac.close().catch(() => {});
+    mic = null;
+  }
+
+  /* ---------------- opening sequence ---------------- */
+  function open() {
+    if (opened) return;
+    opened = true;
+    stopMic();
+    playMusic();
+    $('#musicBtn').hidden = !audio.getAttribute('src') || get('music.showButton') === false;
+    const cover = $('#cover');
+    const video = get('intro.video');
+
+    if (video) {
+      cover.classList.add('is-gone');
+      const film = $('#film'), v = $('#filmVideo');
+      film.hidden = false;
+      v.src = video;
+      const finish = () => {
+        if (film.classList.contains('is-fading')) return;
+        revealHero(true);
+        film.classList.add('is-fading');
+        setTimeout(() => { film.hidden = true; v.pause(); }, 1300);
+      };
+      v.addEventListener('ended', finish, { once: true });
+      v.addEventListener('error', finish, { once: true });
+      $('#filmSkip').onclick = finish;
+      const p = v.play(); if (p && p.catch) p.catch(finish);
+      return;
+    }
+
+    cover.classList.add('is-opening');
+    if (glitter) glitter.fall();
+    if (reduceMotion) { cover.classList.add('is-gone'); revealHero(true); return; }
+    setTimeout(() => revealHero(false), 1300);
+    setTimeout(() => { cover.classList.add('is-gone'); if (glitter) glitter.stop(); }, 2600);
+  }
+
+  function revealHero(instant) {
+    const body = document.body;
+    if (instant) {
+      $$('.curtain, .hero__img').forEach((el) => { el.style.transition = 'none'; });
+      body.classList.add('is-open');
+      requestAnimationFrame(() => requestAnimationFrame(() => $$('.curtain, .hero__img').forEach((el) => { el.style.transition = ''; })));
+    } else {
+      body.classList.add('is-open');
+    }
+    setTimeout(() => body.classList.add('is-revealed'), instant ? 0 : 900);
+    setTimeout(() => body.classList.remove('is-locked'), instant ? 0 : 2400);
+    startDust();
+  }
+
+  /* ---------------- floating dust in the spotlight ---------------- */
+  let dustStarted = false;
+  function startDust() {
+    if (dustStarted || reduceMotion) return;
+    dustStarted = true;
+    const c = $('#dust'), ctx = c.getContext('2d');
+    let w, h, ps = [], visible = true;
+    const resize = () => {
+      w = c.clientWidth; h = c.clientHeight;
+      c.width = w * DPR; c.height = h * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      ps = Array.from({ length: Math.round(w * h / 5200) }, () => ({ x: Math.random() * w, y: Math.random() * h, r: rand(.4, 1.6), v: rand(4, 16), ph: Math.random() * 6.3, a: rand(.2, .9) }));
+    };
+    resize(); addEventListener('resize', resize);
+    new IntersectionObserver((en) => { visible = en[0].isIntersecting; }).observe(c);
+    let last = performance.now();
+    const loop = (now) => {
+      const dt = Math.min(.05, (now - last) / 1000); last = now;
+      if (visible && get('hero.dust') !== false) {
+        ctx.clearRect(0, 0, w, h);
+        for (const p of ps) {
+          p.y -= p.v * dt; p.x += Math.sin(now / 1400 + p.ph) * 6 * dt;
+          if (p.y < -4) { p.y = h + 4; p.x = Math.random() * w; }
+          const fade = Math.min(1, p.y / (h * .25));
+          ctx.globalAlpha = p.a * fade * (.6 + .4 * Math.sin(now / 500 + p.ph));
+          ctx.fillStyle = '#ffd9cf';
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+        }
+      } else if (get('hero.dust') === false) ctx.clearRect(0, 0, w, h);
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+
+  /* ---------------- twinkling stars behind the content ---------------- */
+  function startStars() {
+    const c = $('#stars'), ctx = c.getContext('2d');
+    let w, h, stars = [];
+    const resize = () => {
+      w = c.clientWidth; h = c.clientHeight;
+      c.width = w * DPR; c.height = h * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      stars = Array.from({ length: Math.round(w * h / 4200) }, () => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() < .08 ? rand(1.4, 2.2) : rand(.4, 1.1), ph: Math.random() * 6.3, sp: rand(.6, 2.2), gold: Math.random() < .5 }));
+    };
+    resize(); addEventListener('resize', resize);
+    const loop = (now) => {
+      if (document.body.classList.contains('is-revealed')) {
+        ctx.clearRect(0, 0, w, h);
+        const t = now / 1000;
+        for (const s of stars) {
+          const a = Math.max(0, Math.sin(t * s.sp + s.ph));
+          ctx.globalAlpha = a * (s.r > 1.3 ? .95 : .6);
+          ctx.fillStyle = s.gold ? '#f3d6a3' : '#ffd0d0';
+          if (s.r > 1.3) {
+            const l = s.r * 3 * a;
+            ctx.fillRect(s.x - l, s.y - .4, l * 2, .8);
+            ctx.fillRect(s.x - .4, s.y - l, .8, l * 2);
+          }
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r * .7, 0, 6.283); ctx.fill();
+        }
+      }
+      requestAnimationFrame(loop);
+    };
+    if (!reduceMotion) requestAnimationFrame(loop);
+  }
+
+  /* ---------------- scroll reveal ---------------- */
+  function startReveal() {
+    if (!('IntersectionObserver' in window) || reduceMotion) { $$('.reveal').forEach((e) => e.classList.add('in')); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.15, rootMargin: '0px 0px -5% 0px' });
+    $$('.reveal').forEach((e) => io.observe(e));
+  }
+
+  /* ---------------- RSVP ---------------- */
+  function setupRsvp() {
+    const form = $('#rsvpForm');
+    const status = $('#rsvpStatus');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const name = (fd.get('name') || '').trim();
+      const answer = fd.get('answer');
+      if (!name || !answer) { status.textContent = get('rsvp.missing') || 'Please fill in your name and answer.'; return; }
+      const data = {
+        name,
+        answer: answer === 'accept' ? get('rsvp.accept') : get('rsvp.decline'),
+        attending: answer === 'accept',
+        guests: get('rsvp.askGuests') ? (fd.get('guests') || '') : '',
+        message: (fd.get('message') || '').trim(),
+        event: get('meta.title'),
+        sentAt: new Date().toISOString()
+      };
+      const lines = [
+        `💌 ${get('rsvp.title') || 'RSVP'} — ${get('meta.title') || ''}`,
+        `${get('rsvp.namePlaceholder') || 'Name'}: ${data.name}`,
+        `✔ ${data.answer}`,
+        data.guests ? `${get('rsvp.guestsPlaceholder') || 'Guests'}: ${data.guests}` : '',
+        data.message ? `\n${data.message}` : ''
+      ].filter(Boolean).join('\n');
+      const method = get('rsvp.method') || 'whatsapp';
+      const btn = form.querySelector('button[type="submit"]');
+      try {
+        if (method === 'whatsapp') {
+          const num = String(get('rsvp.whatsapp') || '').replace(/[^\d]/g, '');
+          window.open(`https://wa.me/${num}?text=${encodeURIComponent(lines)}`, '_blank');
+        } else if (method === 'email') {
+          location.href = `mailto:${encodeURIComponent(get('rsvp.email') || '')}?subject=${encodeURIComponent((get('rsvp.title') || 'RSVP') + ' — ' + data.name)}&body=${encodeURIComponent(lines)}`;
+        } else if (method === 'endpoint') {
+          const url = get('rsvp.endpoint');
+          if (!url) throw new Error('No endpoint');
+          btn.disabled = true;
+          if (/script\.google\.com/.test(url)) {
+            await fetch(url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+          } else {
+            const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+          }
+        }
+        status.textContent = get('rsvp.thanks') || 'Thank you!';
+        form.reset();
+      } catch (err) {
+        status.textContent = '⚠ ' + (err.message || 'Could not send');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+
+  /* ---------------- boot ---------------- */
+  async function boot() {
+    let config = S.clone(window.INVITE_CONFIG || {});
+    if (IS_PREVIEW) {
+      try { config = await S.resolveMedia(await S.loadDraft()); } catch (e) { /* fall back to published */ }
+    }
+    apply(config);
+
+    $('#addCal').addEventListener('click', downloadIcs);
+    setupRsvp();
+    startStars();
+    startReveal();
+
+    const cover = $('#cover');
+    const introOn = get('intro.enabled') !== false && !SKIP_INTRO;
+    if (!introOn) {
+      cover.classList.add('is-gone');
+      opened = true;
+      revealHero(true);
+      $('#musicBtn').hidden = !audio.getAttribute('src') || get('music.showButton') === false || get('music.enabled') === false;
+      setMusicUi();
+      // browsers need one tap before sound can play
+      const first = () => { if (!userPaused) playMusic(); };
+      ['pointerdown', 'keydown', 'touchstart'].forEach((ev) => addEventListener(ev, first, { once: true, passive: true }));
+    } else {
+      glitter = Glitter($('#glitter'));
+      cover.addEventListener('click', open);
+      cover.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+      $('#micBtn').addEventListener('click', startMic);
+      setTimeout(() => cover.focus({ preventScroll: true }), 50);
+    }
+
+    // live updates from the dashboard
+    addEventListener('message', (e) => {
+      if (e.origin !== location.origin || !e.data || e.data.type !== 'invite:config') return;
+      apply(e.data.config);
+    });
+    if (IS_PREVIEW && window.parent !== window) window.parent.postMessage({ type: 'invite:ready' }, location.origin);
+  }
+
+  boot();
+})();
