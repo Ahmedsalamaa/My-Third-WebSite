@@ -10,15 +10,18 @@ window.INVITE_CONFIG = {
     "dir": "ltr"
   },
   "theme": {
-    "accent": "#e9c58f",
-    "accent2": "#b8864b",
-    "background": "#1c0508",
-    "background2": "#3b0a12",
-    "text": "#f4e6d6",
+    "accent": "#d9b47c",
+    "accent2": "#f3dcae",
+    "background": "#1a0207",
+    "background2": "#4a0915",
+    "text": "#f7eee6",
+    "ink": "#8f1426",
+    "paper": "#f6eee5",
     "scriptFont": "Corinthia",
-    "namesStyle": "pearl",
     "bodyFont": "Cormorant Garamond",
-    "uiFont": "Gilda Display"
+    "uiFont": "Gilda Display",
+    "namesStyle": "pearl",
+    "typingCursor": false
   },
   "music": {
     "enabled": true,
@@ -33,6 +36,8 @@ window.INVITE_CONFIG = {
     "monogram": "A & S",
     "action": "Blow on the glitter",
     "actionAlt": "or simply tap",
+    "touchAction": "Touch the glitter",
+    "touchActionAlt": "and watch it fall away",
     "glitterImage": "assets/media/glitter.jpg",
     "glitterColor": "#c0121f",
     "curtainColor": "#8a0a18",
@@ -43,8 +48,8 @@ window.INVITE_CONFIG = {
   },
   "hero": {
     "stageImage": "assets/media/stage.jpg",
-    "imagePosition": "50% 70%",
-    "height": 150,
+    "imagePosition": "50% 60%",
+    "height": 100,
     "eyebrow": "Together with their families",
     "name1": "Ahmed",
     "ampersand": "&",
@@ -52,53 +57,77 @@ window.INVITE_CONFIG = {
     "invite": "invite you to celebrate their wedding",
     "dateLine": "30 12 2026",
     "place": "Hayah Hall, Cairo",
-    "scrollHint": "scroll down",
+    "scrollHint": "",
     "curtains": true,
     "beam": false,
     "ring": false,
     "dust": true
   },
-  "story": {
+  "letter": {
     "enabled": true,
-    "title": "Two hearts, one story",
-    "text": "We would be honoured to share the happiest day of our lives with you.\nYour presence completes our joy.",
-    "signature": "The families of Ahmed & Sara\ninvite you to their wedding celebration.",
-    "image": ""
+    "background": "assets/media/silk.jpg",
+    "pin": "assets/media/pearl-pin.webp",
+    "title": "Dear family and friends",
+    "text": "We would love to celebrate this day with you.",
+    "signature": "Ahmed & Sara"
   },
   "event": {
     "enabled": true,
     "datetime": "2026-12-30T20:00",
+    "durationHours": 5,
     "title": "Save the date",
-    "dateText": "Wednesday, December 30, 2026",
-    "timeText": "8:00 PM",
-    "showCountdown": true,
-    "days": "Days",
-    "hours": "Hours",
-    "minutes": "Minutes",
-    "seconds": "Seconds",
-    "showCalendar": true,
+    "subtitle": "Turn the pages to our day",
+    "padLabel": "A & S",
+    "pearls": "assets/media/pearls-strand.webp",
+    "monthsToFlip": 5,
     "weekStartsMonday": true,
-    "calendarButton": "Add to my calendar",
-    "durationHours": 5
+    "dateText": "Wednesday, 30 December 2026",
+    "timeText": "welcome drinks at half past seven",
+    "calendarButton": "Add to my calendar"
   },
   "schedule": {
-    "enabled": false,
+    "enabled": true,
     "title": "The evening",
     "subtitle": "How the night will unfold",
     "items": [
-      { "time": "8:00 PM", "title": "Welcome", "text": "Meet the families and fellow guests" },
-      { "time": "9:00 PM", "title": "Zaffa & first dance", "text": "The couple's grand entrance" },
-      { "time": "10:00 PM", "title": "Dinner", "text": "An evening together" }
+      { "time": "19:30", "title": "Welcome", "text": "Meet your hosts and fellow guests" },
+      { "time": "21:00", "title": "Dinner", "text": "An evening together" }
     ]
   },
   "venue": {
     "enabled": true,
-    "title": "The venue",
+    "title": "Where",
     "image": "assets/media/venue.jpg",
     "name": "Hayah Hall",
-    "address": "Air Force House, Salah Salem Road\n— after Al Tayaran Street",
+    "address": "Air Force House, Salah Salem Road, Cairo",
+    "button": "Get directions",
     "mapsUrl": "https://maps.google.com/?q=Air+Force+House+Salah+Salem+Cairo",
-    "button": "Open in maps"
+    "showMap": true,
+    "mapQuery": "Air Force House, Salah Salem Road, Cairo"
+  },
+  "dress": {
+    "enabled": true,
+    "background": "assets/media/silk.jpg",
+    "title": "Dress code",
+    "text": "Evening attire"
+  },
+  "wishes": {
+    "enabled": true,
+    "title": "A few wishes",
+    "items": [
+      { "title": "Gifts", "text": "Your presence is the best gift." },
+      { "title": "Children", "text": "Please contact your host about bringing children." },
+      { "title": "Photos", "text": "Photographs are welcome." },
+      { "title": "Contact", "text": "Your host" }
+    ]
+  },
+  "faq": {
+    "enabled": true,
+    "title": "Questions",
+    "items": [
+      { "q": "Where is the event?", "a": "Hayah Hall, Air Force House, Salah Salem Road, Cairo." },
+      { "q": "Is there parking?", "a": "Yes, free parking is available at the venue." }
+    ]
   },
   "rsvp": {
     "enabled": true,
@@ -122,8 +151,13 @@ window.INVITE_CONFIG = {
   },
   "closing": {
     "enabled": true,
-    "text": "Thank you for being part of our special day.\nYour presence means more to us than words can say.",
-    "names": "Ahmed & Sara",
+    "title": "Until we meet",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes",
+    "seconds": "seconds",
+    "showSeconds": false,
+    "withLove": "With love,",
     "footer": "Made with love"
   }
 };
