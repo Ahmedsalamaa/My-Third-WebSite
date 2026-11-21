@@ -46,6 +46,7 @@
       { path: 'intro.monogram', label: 'Monogram (middle)', type: 'text' },
       { path: 'intro.action', label: 'Big call to action', type: 'text' },
       { path: 'intro.actionAlt', label: 'Small text under it', type: 'text' },
+      { path: 'intro.breathHint', label: 'Text while listening', type: 'text', help: 'Shown once the microphone is on, above the little breath meter.' },
       { path: 'intro.touchAction', label: 'Call to action without microphone', type: 'text', help: 'Shown when the microphone is off or not allowed, e.g. “Touch the glitter”.' },
       { path: 'intro.touchActionAlt', label: 'Small text (without microphone)', type: 'text' },
       { path: 'intro.glitterImage', label: 'Glitter background', type: 'image', help: 'Leave the default for red glitter, or upload any texture.' },
@@ -69,7 +70,8 @@
       { path: 'letter.signature', label: 'Signature', type: 'text' },
       { path: 'letter.text', label: 'Message', type: 'textarea', wide: true },
       { path: 'letter.background', label: 'Background', type: 'image', wide: true },
-      { path: 'letter.pin', label: 'Pin decoration', type: 'image', wide: true }
+      { path: 'letter.pin', label: 'Pin decoration', type: 'image', wide: true },
+      { path: 'letter.envelope', label: 'Envelope (the card rises out of it)', type: 'image', wide: true, help: 'Remove it to show the card on its own.' }
     ] },
     { id: 'date', icon: '📅', title: 'Save the date', desc: 'Desk calendar whose pages turn while scrolling, ending on your month with the day circled.', section: 'event', fields: [
       { path: 'event.enabled', label: 'Show this section', type: 'toggle', wide: true },
@@ -147,6 +149,7 @@
       { path: 'closing.minutes', label: 'Label: minutes', type: 'text' },
       { path: 'closing.seconds', label: 'Label: seconds', type: 'text' },
       { path: 'closing.showSeconds', label: 'Show seconds', type: 'toggle' },
+      { path: 'closing.curtainBackdrop', label: 'Red curtain background', type: 'toggle' },
       { path: 'closing.footer', label: 'Small footer', type: 'text', wide: true }
     ] },
     { id: 'style', icon: '🎨', title: 'Colors & fonts', desc: 'The look of the whole invitation.', presets: true, fields: [

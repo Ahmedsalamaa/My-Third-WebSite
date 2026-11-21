@@ -36,6 +36,7 @@
       <div class="cover__bottom">
         <p class="cover__action" id="coverAction"></p>
         <p class="cover__alt" id="coverAlt"></p>
+        <div class="cover__meter" id="meter" hidden><i id="meterFill"></i></div>
         <button class="cover__mic" id="micBtn" type="button" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
           <span data-text="intro.micLabel"></span>
@@ -80,14 +81,20 @@
     </section>
 
     <!-- ============ LETTER ============ -->
-    <section class="silk-sec letter" data-section="letter">
+    <section class="silk-sec letter" id="letter" data-section="letter">
       <div class="silk-sec__bg" data-bg="letter.background"></div>
-      <article class="paper card letter__card reveal">
-        <img class="letter__pin" data-src="letter.pin" alt="">
-        <h2 class="script title ink" data-text="letter.title"></h2>
-        <p class="paper__text" data-text="letter.text"></p>
-        <p class="script letter__sig ink" data-text="letter.signature"></p>
-      </article>
+      <div class="letter__sticky">
+        <div class="env" id="env">
+          <img class="env__back" data-src="letter.envelope" alt="">
+          <article class="paper card letter__card" id="letterCard">
+            <img class="letter__pin" data-src="letter.pin" alt="">
+            <h2 class="script title ink" data-text="letter.title"></h2>
+            <p class="paper__text" data-text="letter.text"></p>
+            <p class="script letter__sig ink" data-text="letter.signature"></p>
+          </article>
+          <img class="env__front" data-src="letter.envelope" alt="">
+        </div>
+      </div>
     </section>
 
     <!-- ============ SAVE THE DATE: turning calendar pages ============ -->
@@ -168,7 +175,7 @@
     </section>
 
     <!-- ============ UNTIL WE MEET ============ -->
-    <section class="dark-sec until" data-section="closing">
+    <section class="dark-sec until" id="until" data-section="closing">
       <h2 class="script title reveal" data-text="closing.title"></h2>
       <div class="countdown reveal" id="countdown">
         <div><b id="cdD">0</b><span data-text="closing.days"></span></div>

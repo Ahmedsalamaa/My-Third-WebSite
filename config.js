@@ -36,6 +36,7 @@ window.INVITE_CONFIG = {
     "monogram": "A & S",
     "action": "Blow on the glitter",
     "actionAlt": "or simply tap",
+    "breathHint": "one gentle breath is enough",
     "touchAction": "Touch the glitter",
     "touchActionAlt": "and watch it fall away",
     "glitterImage": "assets/media/glitter.jpg",
@@ -67,6 +68,7 @@ window.INVITE_CONFIG = {
     "enabled": true,
     "background": "assets/media/silk.jpg",
     "pin": "assets/media/pearl-pin.webp",
+    "envelope": "assets/media/envelope.webp",
     "title": "Dear family and friends",
     "text": "We would love to celebrate this day with you.",
     "signature": "Ahmed & Sara"
@@ -158,6 +160,7 @@ window.INVITE_CONFIG = {
     "seconds": "seconds",
     "showSeconds": false,
     "withLove": "With love,",
+    "curtainBackdrop": true,
     "footer": "Made with love"
   }
 };
