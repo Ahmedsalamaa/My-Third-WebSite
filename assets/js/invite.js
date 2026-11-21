@@ -379,17 +379,15 @@
     const span = sec.offsetHeight - innerHeight;
     const prog = Math.max(0, Math.min(1, -r.top / Math.max(1, span)));
     const n = flipPages.length;
+    // like the original: each page flips away quickly once the scroll passes its step,
+    // and the page underneath starts shadowed, then brightens
+    const top = Math.min(n - 1, Math.floor(prog * 1.18 * (n - 1) + 0.1));   // last month reached at ~80% of the scroll
     flipPages.forEach((pg, k) => {
-      if (k === n - 1) { pg.style.transform = ''; pg.style.opacity = ''; return; }
-      // page k turns during its slice of the scroll
-      const a = k / (n - 1) * 0.9, b2 = (k + 1) / (n - 1) * 0.9;
-      const t = Math.max(0, Math.min(1, (prog - a) / (b2 - a)));
-      const e = t * t * (3 - 2 * t);
-      pg.style.transform = `rotateX(${-e * 105}deg)`;
-      pg.style.opacity = String(1 - Math.max(0, (e - 0.65) / 0.35));
-      pg.style.visibility = e >= 1 ? 'hidden' : '';
+      pg.classList.toggle('is-turned', k < top);
+      if (k > top) pg.classList.add('is-under');
+      else if (k === top && pg.classList.contains('is-under')) requestAnimationFrame(() => pg.classList.remove('is-under'));
     });
-    sec.classList.toggle('is-done', prog > 0.93);
+    sec.classList.toggle('is-done', top === n - 1 && prog > 0.8);
   }
   addEventListener('scroll', () => requestAnimationFrame(updateFlip), { passive: true });
   addEventListener('resize', updateFlip);
