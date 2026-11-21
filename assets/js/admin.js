@@ -503,6 +503,7 @@
     const r = await fetch(api, { method: 'PUT', headers, body: JSON.stringify({ message, content, branch: gh.branch, sha }) });
     if (!r.ok) {
       let msg = 'HTTP ' + r.status; try { msg = (await r.json()).message || msg; } catch (e) { /* ignore */ }
+      if (r.status === 403 || /not accessible/i.test(msg)) throw new Error('Your token is not allowed to change this repository. On GitHub, edit the token: Repository access → Only select repositories → ' + gh.repo + ', and Repository permissions → Contents → Read and write. Then press Publish again.');
       throw new Error(path + ': ' + msg);
     }
   }
