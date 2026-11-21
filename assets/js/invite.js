@@ -370,7 +370,7 @@
       box.append(page);
       flipPages.push(page);
     }
-    $('#flip').style.setProperty('--flip-h', (100 + (n - 1) * 55 + 60) + 'svh');
+    $('#flip').style.setProperty('--flip-h', (100 + (n - 1) * 55 + 100) + 'svh');
     updateFlip();
   }
 

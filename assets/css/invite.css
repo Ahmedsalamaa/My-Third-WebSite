@@ -346,9 +346,11 @@ main { position: relative; z-index: 1; }
 .page__ring circle { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 90; stroke-dashoffset: 90; transition: stroke-dashoffset 1.2s var(--ease) .2s; }
 .flip.is-done .page__ring circle { stroke-dashoffset: 0; }
 
-.when { position: relative; text-align: center; padding: 10px 24px 110px; }
+.when { position: relative; z-index: 3; text-align: center; margin-top: 30px; opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .9s var(--ease); pointer-events: none; }
+.flip.is-done .when { opacity: 1; transform: none; pointer-events: auto; }
+@media (max-height: 720px) { .pad__pages { height: 300px; } .page__month { font-size: 36px; } .page__grid .d { height: 23px; } .when { margin-top: 18px; } .flip__sticky .title { font-size: calc(40px * var(--script-scale)); } }
 .when__date { margin: 0; font-family: var(--ui); font-size: 22px; letter-spacing: .05em; color: var(--pearl); }
-.when__note { margin: 6px 0 24px; font-style: italic; font-size: 18px; color: var(--pearl); }
+.when__note { margin: 6px 0 18px; font-style: italic; font-size: 18px; color: var(--pearl); }
 
 /* ---------- Paper sections (The evening, A few wishes) ---------- */
 .paper-sec { position: relative; padding: 110px 24px 110px; text-align: center; }
