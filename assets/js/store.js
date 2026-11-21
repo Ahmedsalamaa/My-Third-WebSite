@@ -101,13 +101,36 @@
       return out;
     },
 
-    /* The draft the dashboard is working on (merged over the published defaults). */
+    /* Only the values that differ from `base` (arrays are compared and kept whole). */
+    diff(base, cur) {
+      if (Store.isObj(base) && Store.isObj(cur)) {
+        const out = {};
+        for (const k of Object.keys(cur)) {
+          if (!(k in base)) { out[k] = Store.clone(cur[k]); continue; }
+          const d = Store.diff(base[k], cur[k]);
+          if (d !== undefined) out[k] = d;
+        }
+        return Object.keys(out).length ? out : undefined;
+      }
+      return JSON.stringify(base) === JSON.stringify(cur) ? undefined : Store.clone(cur);
+    },
+
+    /* The draft keeps ONLY the owner's changes, so design updates in config.js always come through.
+     * Old drafts (a full copy of every setting) are ignored: they would undo newer designs. */
     async loadDraft() {
       const base = window.INVITE_CONFIG || {};
       const draft = await Store.get('draft');
-      return draft ? Store.merge(base, draft) : Store.clone(base);
+      if (draft && draft.v === 2) return Store.merge(base, draft.changes || {});
+      if (draft) await Store.del('draft').catch(() => {});
+      return Store.clone(base);
     },
-    saveDraft(config) { return Store.set('draft', config); }
+    async draftChanges() {
+      const draft = await Store.get('draft');
+      return draft && draft.v === 2 ? (draft.changes || {}) : {};
+    },
+    saveDraft(config) {
+      return Store.set('draft', { v: 2, changes: Store.diff(window.INVITE_CONFIG || {}, config) || {} });
+    }
   };
 
   /* Google Fonts offered in the dashboard. `italic: false` = the font has no italic style. */

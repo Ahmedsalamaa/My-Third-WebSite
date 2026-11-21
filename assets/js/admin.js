@@ -447,7 +447,7 @@
   const blobToDataUrl = (b) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); });
 
   async function exportBackup() {
-    const out = S.clone(config);
+    const out = S.diff(window.INVITE_CONFIG, config) || {};
     const files = {};
     const ids = [];
     S.walk(out, (v) => { if (typeof v === 'string' && v.startsWith('idb:')) ids.push(v.slice(4)); });
@@ -470,7 +470,7 @@
         await S.putFile(id, blob);
         await S.set('name:' + id, data.files[id].name || id);
       }
-      config = S.merge(window.INVITE_CONFIG, data.config);
+      config = S.merge(window.INVITE_CONFIG, data.config);   // backup files may hold a full copy; only differences are kept as draft
       changed(true);
       toast('Backup restored ✓');
     } catch (e) { toast('Import failed: ' + e.message, true); }
@@ -508,6 +508,19 @@
     }
   }
 
+  /* Read the newest config.js straight from GitHub, so publishing never undoes newer design updates. */
+  async function ghReadConfig(gh) {
+    try {
+      const api = `https://api.github.com/repos/${encodeURIComponent(gh.owner)}/${encodeURIComponent(gh.repo)}/contents/config.js?ref=${encodeURIComponent(gh.branch)}`;
+      const r = await fetch(api, { headers: { Authorization: 'Bearer ' + gh.token, Accept: 'application/vnd.github.raw+json', 'X-GitHub-Api-Version': '2022-11-28' }, cache: 'no-store' });
+      if (!r.ok) return null;
+      const src = await r.text();
+      const w = {};
+      new Function('window', src)(w);
+      return w.INVITE_CONFIG && typeof w.INVITE_CONFIG === 'object' ? w.INVITE_CONFIG : null;
+    } catch (e) { return null; }
+  }
+
   async function publish(log, btn) {
     const gh = ghSettings();
     if (!gh.owner || !gh.repo || !gh.token) {
@@ -522,7 +535,7 @@
     const say = (m) => { log.textContent += m + '\n'; log.scrollTop = log.scrollHeight; };
     log.textContent = '';
     try {
-      const out = S.clone(config);
+      const out = config;                       // uploads below replace idb: links in place
       const refs = {};
       S.walk(out, (v, path) => { if (typeof v === 'string' && v.startsWith('idb:')) (refs[v] = refs[v] || []).push(path); });
       const keys = Object.keys(refs);
@@ -539,9 +552,15 @@
         refs[ref].forEach((p) => { S.setPath(out, p, path); S.setPath(config, p, path); });
       }
       say('Saving texts & settings (config.js)…');
-      const js = '/* Invitation content.\n * This file is written by the dashboard (admin.html → Publish).\n * You can also edit it by hand: every text, photo and setting of the invitation lives here.\n */\nwindow.INVITE_CONFIG = ' + JSON.stringify(out, null, 2) + ';\n';
+      const changes = S.diff(window.INVITE_CONFIG, config) || {};
+      const latest = (await ghReadConfig(gh)) || window.INVITE_CONFIG;
+      const final = S.merge(latest, changes);
+      const js = '/* Invitation content.\n * This file is written by the dashboard (admin.html → Publish).\n * You can also edit it by hand: every text, photo and setting of the invitation lives here.\n */\nwindow.INVITE_CONFIG = ' + JSON.stringify(final, null, 2) + ';\n';
       await ghPut(gh, 'config.js', b64FromText(js), 'Update invitation from dashboard');
+      window.INVITE_CONFIG = S.clone(final);   // published = new baseline, draft becomes empty
+      config = S.clone(final);
       await S.saveDraft(config);
+      renderEditor();
       say('✓ Published! GitHub Pages usually updates within 1–2 minutes.');
       status('Published ✓', true);
       toast('Published ✓');
@@ -602,7 +621,7 @@
   /* ---------------- boot ---------------- */
   async function boot() {
     try { config = await S.loadDraft(); } catch (e) { config = S.clone(window.INVITE_CONFIG); toast('Browser storage unavailable — changes will not be kept.', true); }
-    const hasDraft = !!(await S.get('draft').catch(() => null));
+    const hasDraft = Object.keys(await S.draftChanges().catch(() => ({}))).length > 0;
     status(hasDraft ? 'Draft loaded · not published yet' : 'Showing the published invitation', !hasDraft);
     updateNav();
     renderEditor();
