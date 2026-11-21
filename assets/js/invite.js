@@ -102,11 +102,12 @@
 
     const tex = get('theme.paperTexture'), lace = get('theme.laceTrim'), bd = get('closing.backdrop');
     document.body.classList.toggle('has-paper-tex', !!tex);
-    if (tex) root.style.setProperty('--paper-tex', `url("${tex}")`);
+    const abs = (u) => { try { return new URL(u, location.href).href; } catch (e) { return u; } };
+    if (tex) root.style.setProperty('--paper-tex', `url("${abs(tex)}")`);
     document.body.classList.toggle('has-lace-img', !!lace);
-    if (lace) root.style.setProperty('--lace-img', `url("${lace}")`);
+    if (lace) root.style.setProperty('--lace-img', `url("${abs(lace)}")`);
     $('#until').classList.toggle('has-backdrop', !!bd);
-    if (bd) $('#until').style.setProperty('--backdrop-url', `url("${bd}")`);
+    if (bd) $('#until').style.setProperty('--backdrop-url', `url("${abs(bd)}")`);
     $('#until').classList.toggle('has-curtain', !bd && get('closing.curtainBackdrop') !== false);
     const film = get('intro.video'), hf = $('#heroFilm');
     document.body.classList.toggle('has-film', !!film);
@@ -232,21 +233,37 @@
     typeState = 'typing';
     const caret = document.createElement('span');
     caret.className = 'caret';
-    els.forEach((el) => { el.textContent = ''; });
-    for (const el of els) {
-      const full = el.dataset.full || '';
-      if (!full) continue;
+    // like the original: the small lines fade in, only the names are written letter by letter
+    els.forEach((el) => {
+      if (el.classList.contains('hero__name')) el.textContent = '';
+      else {
+        el.style.transition = 'none';             // start hidden, no fade-out flash
+        el.classList.add('fade-wait');
+        el.textContent = el.dataset.full || '';
+        void el.offsetWidth;
+        el.style.transition = '';
+      }
+    });
+    const show = (sel) => $$(sel).forEach((e) => e.classList.add('fade-in'));
+    show('#hero .hero__eyebrow');
+    await sleep(700);
+    const names = els.filter((e) => e.classList.contains('hero__name'));
+    for (let n = 0; n < names.length; n++) {
+      const el = names[n], full = el.dataset.full || '';
       const txt = document.createTextNode('');
-      el.textContent = '';
       el.append(txt, caret);
       const chars = Array.from(full);
-      const isName = el.classList.contains('hero__name');
-      for (let i = 1; i <= chars.length; i++) {
-        txt.data = chars.slice(0, i).join('');
-        await sleep(isName ? 125 : el.classList.contains('hero__date') ? 70 : 45);
-      }
-      await sleep(isName ? 260 : 160);
+      for (let i = 1; i <= chars.length; i++) { txt.data = chars.slice(0, i).join(''); await sleep(95); }
+      if (n === 0) { show('#hero .hero__amp'); await sleep(350); }
     }
+    caret.remove();
+    await sleep(250);
+    show('#hero .hero__invite');
+    await sleep(250);
+    show('#hero .hero__date');
+    await sleep(250);
+    show('#hero .hero__place');
+    await sleep(900);
     typeState = 'done';
     els.forEach((el) => { el.textContent = el.dataset.full || ''; });
     const last = els.filter((e) => e.dataset.full).pop();
@@ -283,7 +300,7 @@
     const e = 1 - Math.pow(1 - p, 2);
     const h = card.offsetHeight;
     // start mostly inside the pocket, end lifted out above it
-    card.style.transform = `translateY(${(0.42 - e * 0.95) * h}px)`;
+    card.style.transform = `translateY(${(0.38 - e * 0.44) * h}px)`;
   }
   addEventListener('scroll', () => requestAnimationFrame(updateLetter), { passive: true });
   addEventListener('resize', updateLetter);
@@ -625,11 +642,12 @@
     if (video) {
       // The film starts on the same glitter frame as the cover, so the cover can simply fade away
       const v = $('#heroFilm'), body = document.body;
+      body.classList.add('film-playing');
       cover.classList.add('is-fast');
       setTimeout(() => cover.classList.add('is-gone'), 400);
       body.classList.add('is-open', 'is-revealed');
       startDust();
-      const fail = () => { body.classList.remove('has-film'); revealHero(true); };
+      const fail = () => { body.classList.remove('film-playing'); revealHero(true); };
       v.currentTime = 0;
       const p = v.play(); if (p && p.catch) p.catch(fail);
       v.addEventListener('error', fail, { once: true });

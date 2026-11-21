@@ -22,8 +22,8 @@ window.INVITE_CONFIG = {
     "uiFont": "Gilda Display",
     "namesStyle": "pearl",
     "typingCursor": false,
-    "paperTexture": "",
-    "laceTrim": ""
+    "paperTexture": "assets/media/emboss.jpg",
+    "laceTrim": "assets/media/lace-trim.webp"
   },
   "music": {
     "enabled": true,
@@ -47,7 +47,7 @@ window.INVITE_CONFIG = {
     "enableMic": true,
     "autoMic": true,
     "micLabel": "Use microphone to blow",
-    "video": "",
+    "video": "assets/media/film.mp4",
     "namesAt": 3
   },
   "hero": {
@@ -164,7 +164,7 @@ window.INVITE_CONFIG = {
     "showSeconds": false,
     "withLove": "With love,",
     "curtainBackdrop": true,
-    "backdrop": "",
+    "backdrop": "assets/media/stage-curtain.jpg",
     "footer": "Made with love"
   }
 };
