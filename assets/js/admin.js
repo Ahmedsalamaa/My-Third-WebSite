@@ -55,6 +55,7 @@
       { path: 'intro.enableMic', label: '“Blow on the glitter” (microphone)', type: 'toggle', help: 'Only works on https (e.g. GitHub Pages).' },
       { path: 'intro.autoMic', label: 'Start the microphone automatically', type: 'toggle', help: 'The phone asks permission as soon as the invitation opens. Turn off to show a button instead.' },
       { path: 'intro.micLabel', label: 'Microphone button text', type: 'text' },
+      { path: 'intro.micTapLabel', label: 'iPhone button text', type: 'text', help: 'iPhones need one tap before the microphone can listen; this button asks for it.' },
       { path: 'intro.video', label: 'Opening film (optional)', type: 'video', wide: true, help: 'A vertical film that starts on the glitter and ends on the couple (like the original). It plays on the stage instead of the built-in curtain animation.' },
       { path: 'intro.namesAt', label: 'Names start typing after (seconds of film)', type: 'number', min: 0, step: 0.5 }
     ] },
