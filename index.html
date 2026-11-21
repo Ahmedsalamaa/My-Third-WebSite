@@ -1,480 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLUE Lock</title>
-    <!--Render All Elemnts Normally-->
-    <link rel="stylesheet" href="main-css/normalize.css">
-    <!-- Font Awesome Library-->
-    <link rel="stylesheet" href="main-css/all.min.css">
-    <!-- Main Template CSS File-->
-    <link rel="stylesheet" href="main-css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <!--google Fonts-->
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300&family=Open+Sans:wght@400;500;700;800&family=Work+Sans:wght@200;300;400;500;600;700;800&display=swap"
-rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1c0508">
+  <title>Wedding Invitation</title>
+  <meta name="description" content="You are invited">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/media/stage.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link id="fontsLink" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Cormorant+SC:wght@500&display=swap">
+  <link rel="stylesheet" href="assets/css/invite.css">
+  <link rel="preload" as="image" href="assets/media/glitter.jpg">
 </head>
-<body>
-    <!--Start Header-->
-     <!-- Start Header -->
-     <header>
-        <div class="container">
-          <a href="#" class="logo">
-            <img decoding="async" src="images/logo.png" alt="Logo" />
-          </a>
-          <nav>
-            <i class="fas fa-bars toggle-menu"></i>
-            <ul>
-              <li><a class="active" href="#">Home</a></li>
-              <li><a href="#">Services</a></li>
-              <li><a href="#">Portfolio</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Pricing</a></li>
-              <li><a href="#">Contact</a></li>
-            </ul>
-            <div class="form">
-              <i class="fas fa-search"></i>
-            </div>
-          </nav>
-        </div>
-      </header>
-      <!-- End Header -->
-      <!-- Start Landing -->
-      <div class="landing">
-        <div class="overlay"></div>
-        <div class="text">
-          <div class="content">
-            <h2>
-              Hello World!<br />
-              We Are Kasper We Make Art.
-            </h2>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget tincidunt
-              nibh pulvinar a. Curabitur aliquet quam. Accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet
-              elit, eget tincidunt.
-            </p>
-          </div>
-        </div>
-        <i class="fas fa-angle-left change-background fa-2x"></i>
-        <i class="fas fa-angle-right change-background fa-2x"></i>
-        <ul class="bullets">
-          <li></li>
-          <li class="active"></li>
-          <li></li>
-        </ul>
+<body class="is-locked">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#e9c58f" class="g1"/><stop offset=".55" stop-color="#fff4dc"/><stop offset="1" stop-color="#b8864b" class="g2"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ============ 1. GLITTER COVER ============ -->
+  <div class="cover" id="cover" role="button" tabindex="0" aria-label="Tap to open the invitation">
+    <div class="cover__bg" id="coverBg" data-bg="intro.glitterImage"></div>
+    <canvas class="cover__glitter" id="glitter" aria-hidden="true"></canvas>
+    <div class="cover__ui">
+      <p class="cover__hint" data-text="intro.hint"></p>
+      <p class="cover__mono" data-text="intro.monogram"></p>
+      <div class="cover__bottom">
+        <p class="cover__action" data-text="intro.action"></p>
+        <p class="cover__alt" data-text="intro.actionAlt"></p>
+        <button class="cover__mic" id="micBtn" type="button" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
+          <span data-text="intro.micLabel"></span>
+        </button>
       </div>
-      <!-- End Landing -->
-      <!-- Start Services -->
-      <div class="services">
-        <div class="container">
-          <div class="main-heading">
-            <h2>Services</h2>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-              tincidunt.
-            </p>
-          </div>
-          <div class="services-container">
-            <div class="srv-box">
-              <i class=" fas fa-pencil fa-3x"></i>
-              <div class="text">
-                <h3>Vorem amet intuitive</h3>
-                <p>
-                  Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-                  tincidunt nibh pulvinar a. Curabitur aliquet quam.
-                </p>
-              </div>
-            </div>
-            <div class="srv-box">
-              <i class="fas fa-cog fa-3x"></i>
-              <div class="text">
-                <h3>Vorem amet intuitive</h3>
-                <p>
-                  Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-                  tincidunt nibh pulvinar a. Curabitur aliquet quam.
-                </p>
-              </div>
-            </div>
-            <div class="srv-box">
-              <i class="fas fa-pencil-ruler fa-3x"></i>
-              <div class="text">
-                <h3>Vorem amet intuitive</h3>
-                <p>
-                  Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-                  tincidunt nibh pulvinar a. Curabitur aliquet quam.
-                </p>
-              </div>
-            </div>
-            <div class="srv-box">
-              <i class="fas fa-camera fa-3x"></i>
-              <div class="text">
-                <h3>Vorem amet intuitive</h3>
-                <p>
-                  Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-                  tincidunt nibh pulvinar a. Curabitur aliquet quam.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+    </div>
+  </div>
+
+  <!-- Optional opening film (set in dashboard → Opening → Opening video) -->
+  <div class="film" id="film" hidden>
+    <video id="filmVideo" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture></video>
+    <button class="film__skip" id="filmSkip" type="button">Skip ›</button>
+  </div>
+
+  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
+
+  <main id="main">
+    <!-- ============ 2. STAGE / HERO ============ -->
+    <section class="hero" id="hero">
+      <div class="hero__stage">
+        <img class="hero__img" id="stageImg" data-src="hero.stageImage" alt="">
+        <div class="hero__beam" id="beam"></div>
+        <div class="hero__ring" id="ring"></div>
+        <canvas class="hero__dust" id="dust" aria-hidden="true"></canvas>
+        <div class="hero__shade"></div>
       </div>
-      <!-- End Services -->
-      <!-- Start Design -->
-      <div class="design">
-        <div class="image">
-          <img decoding="async" src="images/mobile.png" alt="Mobile" />
-        </div>
-        <div class="text">
-          <h2>Our Design Comes With...</h2>
-          <ul>
-            <li>Responsive Design</li>
-            <li>Modern And Clean Design</li>
-            <li>Clean Code</li>
-            <li>Browser Friendly</li>
-          </ul>
-        </div>
+      <div class="curtain curtain--l" id="curtainL"><div class="curtain__tex" data-bg-velvet></div></div>
+      <div class="curtain curtain--r" id="curtainR"><div class="curtain__tex" data-bg-velvet></div></div>
+
+      <div class="hero__text">
+        <p class="hero__eyebrow" data-text="hero.eyebrow"></p>
+        <h1 class="hero__names">
+          <span class="script hero__name" data-letters="hero.name1"></span>
+          <span class="hero__amp" data-text="hero.ampersand"></span>
+          <span class="script hero__name" data-letters="hero.name2"></span>
+        </h1>
+        <p class="hero__date caps" data-text="hero.dateLine"></p>
       </div>
-      <!-- End Design -->
-      <!-- Start Portfolio -->
-      <div class="portfolio">
-        <div class="container">
-          <div class="main-heading">
-            <h2>Portfolio</h2>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-              tincidunt.
-            </p>
-          </div>
-          <ul class="shuffle">
-            <li class="active">All</li>
-            <li>App</li>
-            <li>Photo</li>
-            <li>Web</li>
-            <li>Print</li>
-          </ul>
+      <p class="hero__scroll" data-text="hero.scrollHint"></p>
+    </section>
+
+    <div class="sky" id="sky">
+
+      <!-- ============ 3. STORY ============ -->
+      <section class="sec story" data-section="story">
+        <h2 class="script sec__title reveal" data-text="story.title"></h2>
+        <p class="body-text reveal" data-text="story.text"></p>
+        <img class="story__img reveal" data-src="story.image" alt="">
+        <div class="ornament reveal" id="storyOrnament" aria-hidden="true">
+          <svg viewBox="0 0 200 120">
+            <!-- interlocking hearts with flourishes -->
+            <g fill="none" stroke="url(#goldG)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path class="draw" d="M90 84 C 68 68, 62 50, 74 42 C 82 37, 90 42, 90 50 C 90 42, 98 37, 106 42 C 118 50, 112 68, 90 84 Z"/>
+              <path class="draw" d="M112 88 C 92 74, 86 58, 96 50 C 103 45, 112 49, 112 56 C 112 49, 121 45, 128 50 C 138 58, 132 74, 112 88 Z"/>
+              <path class="draw" d="M62 66 C 46 66, 36 58, 22 62 C 12 65, 10 76, 20 78 C 28 80, 30 70, 24 69" stroke-width="1.4"/>
+              <path class="draw" d="M140 70 C 156 70, 166 62, 180 66 C 190 69, 192 80, 182 82 C 174 84, 172 74, 178 73" stroke-width="1.4"/>
+              <path class="draw" d="M40 100 C 70 108, 130 108, 160 100" stroke-width="1.1" opacity=".7"/>
+            </g>
+          </svg>
         </div>
-        <div class="imgs-container">
-          <div class="box">
-            <img decoding="async" src="images/shuffle-01.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
-          <div class="box">
-            <img decoding="async" src="images/shuffle-02.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
-          <div class="box">
-            <img decoding="async" src="images/shuffle-03.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
-          <div class="box">
-            <img decoding="async" src="images/shuffle-04.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
-          <div class="box">
-            <img decoding="async" src="images/shuffle-05.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
-          <div class="box">
-            <img decoding="async" src="images/shuffle-06.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
-          <div class="box">
-            <img decoding="async" src="images/shuffle-07.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
-          <div class="box">
-            <img decoding="async" src="images/shuffle-08.jpg" alt="" />
-            <div class="caption">
-              <h4>Awesome Image</h4>
-              <p>Photography</p>
-            </div>
-          </div>
+        <p class="body-text body-text--small reveal" data-text="story.signature"></p>
+      </section>
+
+      <!-- ============ 4. SAVE THE DATE ============ -->
+      <section class="sec date" data-section="event">
+        <div class="sun reveal" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <g stroke="url(#goldG)" stroke-width="1.6" stroke-linecap="round">
+              <g class="sun__rays"></g>
+            </g>
+            <circle cx="60" cy="60" r="20" fill="none" stroke="url(#goldG)" stroke-width="2"/>
+            <circle cx="60" cy="60" r="14" fill="url(#goldG)" opacity=".85"/>
+          </svg>
         </div>
-        <a href="#" class="more">More</a>
+        <h2 class="script sec__title reveal" data-text="event.title"></h2>
+        <p class="date__day reveal" data-text="event.dateText"></p>
+        <p class="date__time reveal" data-text="event.timeText"></p>
+
+        <div class="countdown reveal" id="countdown">
+          <div><b id="cdD">0</b><span data-text="event.days"></span></div>
+          <div><b id="cdH">0</b><span data-text="event.hours"></span></div>
+          <div><b id="cdM">0</b><span data-text="event.minutes"></span></div>
+          <div><b id="cdS">0</b><span data-text="event.seconds"></span></div>
+        </div>
+
+        <div class="cal reveal" id="calendar">
+          <p class="cal__title caps" id="calTitle"></p>
+          <div class="cal__grid" id="calGrid"></div>
+        </div>
+        <button class="btn btn--ghost reveal" id="addCal" type="button" data-text="event.calendarButton"></button>
+      </section>
+
+      <!-- ============ 5. SCHEDULE (optional) ============ -->
+      <section class="sec schedule" data-section="schedule">
+        <h2 class="script sec__title reveal" data-text="schedule.title"></h2>
+        <p class="body-text reveal" data-text="schedule.subtitle"></p>
+        <ol class="timeline" id="timeline"></ol>
+      </section>
+
+      <!-- ============ 6. VENUE ============ -->
+      <section class="sec venue" data-section="venue">
+        <h2 class="script sec__title reveal" data-text="venue.title"></h2>
+        <figure class="venue__frame reveal"><img data-src="venue.image" alt=""></figure>
+        <h3 class="venue__name reveal" data-text="venue.name"></h3>
+        <p class="body-text reveal" data-text="venue.address"></p>
+        <a class="btn btn--gold reveal" id="mapsBtn" target="_blank" rel="noopener" data-text="venue.button"></a>
+      </section>
+    </div>
+
+    <!-- ============ 7. RSVP ============ -->
+    <section class="rsvp" data-section="rsvp">
+      <div class="rsvp__bg" data-bg="rsvp.background"></div>
+      <div class="rsvp__inner">
+        <h2 class="script sec__title reveal" data-text="rsvp.title"></h2>
+        <p class="body-text reveal" data-text="rsvp.text"></p>
+        <p class="rsvp__deadline caps reveal" data-text="rsvp.deadline"></p>
+        <form class="rsvp__form reveal" id="rsvpForm" novalidate>
+          <input class="field" name="name" required autocomplete="name" data-ph="rsvp.namePlaceholder">
+          <div class="choice" role="radiogroup">
+            <label><input type="radio" name="answer" value="accept" required><span data-text="rsvp.accept"></span></label>
+            <label><input type="radio" name="answer" value="decline"><span data-text="rsvp.decline"></span></label>
+          </div>
+          <input class="field" name="guests" type="number" min="1" max="20" inputmode="numeric" id="guestsField" data-ph="rsvp.guestsPlaceholder">
+          <textarea class="field" name="message" rows="2" data-ph="rsvp.messagePlaceholder"></textarea>
+          <button class="btn btn--gold" type="submit" data-text="rsvp.button"></button>
+          <p class="rsvp__status" id="rsvpStatus" role="status" aria-live="polite"></p>
+        </form>
       </div>
-      <!-- End Portfolio -->
-      <!-- Start Video -->
-      <div class="video">
-        <video autoplay muted loop>
-          <source src="images/awesome-video.mp4" type="video/mp4" />
-        </video>
-        <div class="text">
-          <h2>Super Awesome Video Here</h2>
-          <p>Its All You Need</p>
-          <button>See More</button>
-        </div>
-      </div>
-      <!-- End Video -->
-      <!-- Start About -->
-      <div class="about">
-        <div class="container">
-          <div class="main-heading">
-            <h2>About Us</h2>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-              tincidunt.
-            </p>
-          </div>
-          <img decoding="async" src="images/about.png" alt="" />
-        </div>
-      </div>
-      <!-- End About -->
-      <!-- Start Stats -->
-      <div class="stats">
-        <div class="container">
-          <div class="box">
-            <i class="fas fa-mug-hot"></i>
-            <div class="number">1.236</div>
-            <p>Coffee Drinks</p>
-          </div>
-          <div class="box">
-            <i class="far fa-folder"></i>
-            <div class="number">256</div>
-            <p>Completed Projects</p>
-          </div>
-          <div class="box">
-            <i class="far fa-envelope"></i>
-            <div class="number">1,743</div>
-            <p>Mail Sent</p>
-          </div>
-          <div class="box">
-            <i class="fas fa-trophy"></i>
-            <div class="number">17</div>
-            <p>Awards Received</p>
-          </div>
-        </div>
-      </div>
-      <!-- End Stats -->
-      <!-- Start Skills -->
-      <div class="our-skills">
-        <div class="container">
-          <div class="testimonials">
-            <h3>Testimonials</h3>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-              tincidunt.
-            </p>
-            <div class="content">
-              <img decoding="async" src="images/skills-01.jpg" alt="" />
-              <div class="text">
-                Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-                tincidunt.
-                <p>John Doe, CEO</p>
-              </div>
-            </div>
-            <div class="content">
-              <img decoding="async" src="images/skills-02.jpg" alt="" />
-              <div class="text">
-                Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-                tincidunt.
-                <p>John Doe, CEO</p>
-              </div>
-            </div>
-            <ul class="bullets">
-              <li></li>
-              <li class="active"></li>
-              <li></li>
-            </ul>
-          </div>
-          <div class="skills">
-            <h3>Skills</h3>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-              tincidunt.
-            </p>
-            <div class="prog-holder">
-              <h4>Adobe</h4>
-              <div class="prog">
-                <span style="width: 90%" data-progress="90%"></span>
-              </div>
-            </div>
-            <div class="prog-holder">
-              <h4>Html &amp; Css</h4>
-              <div class="prog">
-                <span style="width: 85%" data-progress="85%"></span>
-              </div>
-            </div>
-            <div class="prog-holder">
-              <h4>JavaScript</h4>
-              <div class="prog">
-                <span style="width: 80%" data-progress="80%"></span>
-              </div>
-            </div>
-            <div class="prog-holder">
-              <h4>Php</h4>
-              <div class="prog">
-                <span style="width: 90%" data-progress="90%"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- End Skills -->
-      <!-- Start Quote -->
-      <div class="quote">
-        <div class="container">
-          <q>accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget tincidunt.</q>
-          <span>John Doe</span>
-        </div>
-      </div>
-      <!-- End Quote -->
-      <!-- Start Pricing -->
-      <div class="pricing">
-        <div class="container">
-          <div class="main-heading">
-            <h2>Pricing</h2>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-              tincidunt.
-            </p>
-          </div>
-          <div class="plans">
-            <div class="plan">
-              <div class="head">
-                <h3>Basic</h3>
-                <span>19</span>
-              </div>
-              <ul>
-                <li>Feature No 1</li>
-                <li>Extra Feature</li>
-                <li>Extra Feature No 2</li>
-                <li>Feature</li>
-              </ul>
-              <div class="foot">
-                <a href="#">Buy Now</a>
-              </div>
-            </div>
-            <div class="plan">
-              <div class="head">
-                <h3>Premium</h3>
-                <span>29</span>
-              </div>
-              <ul>
-                <li>Feature No 1</li>
-                <li>Extra Feature</li>
-                <li>Extra Feature No 2</li>
-                <li>Feature</li>
-              </ul>
-              <div class="foot">
-                <a href="#">Buy Now</a>
-              </div>
-            </div>
-            <div class="plan">
-              <div class="head">
-                <h3>Pro</h3>
-                <span>39</span>
-              </div>
-              <ul>
-                <li>Feature No 1</li>
-                <li>Extra Feature</li>
-                <li>Extra Feature No 2</li>
-                <li>Feature</li>
-              </ul>
-              <div class="foot">
-                <a href="#">Buy Now</a>
-              </div>
-            </div>
-            <div class="plan">
-              <div class="head">
-                <h3>Platinum</h3>
-                <span>49</span>
-              </div>
-              <ul>
-                <li>Feature No 1</li>
-                <li>Extra Feature</li>
-                <li>Extra Feature No 2</li>
-                <li>Feature</li>
-              </ul>
-              <div class="foot">
-                <a href="#">Buy Now</a>
-              </div>
-            </div>
-          </div>
-          <p class="contact-text">Contact us if you have special request</p>
-          <a href="#" class="contact-link">Contact Us</a>
-        </div>
-      </div>
-      <!-- End Pricing -->
-      <!-- Start Subscribe -->
-      <div class="subscribe">
-        <div class="container">
-          <form action="">
-            <i class="far fa-envelope fa-lg"></i>
-            <input type="email" name="mail" placeholder="Your Email" />
-            <input type="submit" value="Subscribe" />
-          </form>
-          <p>
-            Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blan dit aliquet elit, eget tincidunt.
-          </p>
-        </div>
-      </div>
-      <!-- End Subscribe -->
-      <!-- Start Contact -->
-      <div class="contact">
-        <div class="container">
-          <div class="main-heading">
-            <h2>Contact Us</h2>
-            <p>
-              Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget
-              tincidunt.
-            </p>
-          </div>
-          <div class="content">
-            <form action="">
-              <input class="main-input" type="text" name="name" placeholder="Your Name" />
-              <input class="main-input" type="email" name="mail" placeholder="Your Email" />
-              <textarea class="main-input" name="message" placeholder="Your Message"></textarea>
-              <input type="submit" value="Send Message" />
-            </form>
-            <div class="info">
-              <h4>Get In Touch</h4>
-              <span class="phone">+20 102.629.6355</span>
-              <span class="phone">+20 102.679.7671</span>
-              <h4>Where We Are</h4>
-              <address>Awesome Address 17<br />New York, NYC<br />123-4567-890<br />USA</address>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- End Contact -->
-      <!-- Start Footer -->
-      <div class="footer">
-        <div class="container">
-          <img decoding="async" src="/images/logo.png" alt="Logo" />
-          <p>We Are Social</p>
-          <div class="social-icons">
-            <i class="fab fa-facebook-f"></i>
-            <i class="fab fa-twitter"></i>
-            <i class="fas fa-home"></i>
-            <i class="fab fa-linkedin"></i>
-          </div>
-          <p class="copyright">&copy; 2023 <span>Salama</span> All Right Reserved</p>
-        </div>
-      </div>
-      <!-- End Footer -->
-    </body>
-  </html>
+    </section>
+
+    <!-- ============ 8. CLOSING ============ -->
+    <section class="sec closing" data-section="closing">
+      <p class="closing__text reveal" data-text="closing.text"></p>
+      <p class="script closing__names reveal" data-text="closing.names"></p>
+      <p class="closing__footer" data-text="closing.footer"></p>
+    </section>
+  </main>
+
+  <!-- Music -->
+  <audio id="music" loop preload="auto"></audio>
+  <button class="music-btn" id="musicBtn" type="button" aria-label="Pause music" hidden>
+    <span class="music-btn__bars"><i></i><i></i><i></i><i></i></span>
+  </button>
+
+  <script src="config.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/invite.js"></script>
+</body>
+</html>
