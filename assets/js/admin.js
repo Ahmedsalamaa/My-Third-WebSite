@@ -26,7 +26,7 @@
     { id: 'couple', icon: '💍', title: 'Couple & stage', desc: 'The first screen after the curtains open: names, date line and the photo on stage.', fields: [
       { path: 'hero.stageImage', label: 'Stage photo', type: 'image', wide: true, help: 'Tall portrait photo of the couple works best (9:16). It appears behind the curtains.' },
       { path: 'hero.imagePosition', label: 'Photo focus point', type: 'focus', help: 'Move the focus so faces stay visible on every phone.' },
-      { path: 'hero.height', label: 'Stage zoom (height)', type: 'number', min: 100, step: 10, help: '100 = whole photo on one screen. 150 = zoomed in like a film, the couple appears while scrolling.' },
+      { path: 'hero.height', label: 'Stage height', type: 'number', min: 100, step: 10, help: '100 = whole photo on one screen (original). 150 = zoomed in, the couple appears while scrolling.' },
       { path: 'hero.eyebrow', label: 'Line above names', type: 'text' },
       { path: 'hero.name1', label: 'First name', type: 'text' },
       { path: 'hero.name2', label: 'Second name', type: 'text' },
@@ -46,6 +46,8 @@
       { path: 'intro.monogram', label: 'Monogram (middle)', type: 'text' },
       { path: 'intro.action', label: 'Big call to action', type: 'text' },
       { path: 'intro.actionAlt', label: 'Small text under it', type: 'text' },
+      { path: 'intro.touchAction', label: 'Call to action without microphone', type: 'text', help: 'Shown when the microphone is off or not allowed, e.g. “Touch the glitter”.' },
+      { path: 'intro.touchActionAlt', label: 'Small text (without microphone)', type: 'text' },
       { path: 'intro.glitterImage', label: 'Glitter background', type: 'image', help: 'Leave the default for red glitter, or upload any texture.' },
       { path: 'intro.glitterColor', label: 'Glitter color', type: 'color' },
       { path: 'intro.curtainColor', label: 'Curtain color', type: 'color' },
@@ -61,43 +63,60 @@
       { path: 'music.startAt', label: 'Start at (seconds)', type: 'number', min: 0, step: 1, help: 'Skip a slow intro of the song.' },
       { path: 'music.showButton', label: 'Show play / pause button', type: 'toggle' }
     ] },
-    { id: 'story', icon: '💌', title: 'Story', desc: '“Two hearts, one story” — your welcome message.', section: 'story', fields: [
-      { path: 'story.enabled', label: 'Show this section', type: 'toggle', wide: true },
-      { path: 'story.title', label: 'Title', type: 'text', wide: true },
-      { path: 'story.text', label: 'Message', type: 'textarea', wide: true },
-      { path: 'story.image', label: 'Picture (optional)', type: 'image', wide: true, help: 'e.g. swans, a couple photo or engagement picture.' },
-      { path: 'story.signature', label: 'Text under the ornament', type: 'textarea', wide: true }
+    { id: 'letter', icon: '💌', title: 'Letter', desc: 'The paper card pinned with a pearl on red silk.', section: 'letter', fields: [
+      { path: 'letter.enabled', label: 'Show this section', type: 'toggle', wide: true },
+      { path: 'letter.title', label: 'Title', type: 'text' },
+      { path: 'letter.signature', label: 'Signature', type: 'text' },
+      { path: 'letter.text', label: 'Message', type: 'textarea', wide: true },
+      { path: 'letter.background', label: 'Background', type: 'image', wide: true },
+      { path: 'letter.pin', label: 'Pin decoration', type: 'image', wide: true }
     ] },
-    { id: 'date', icon: '📅', title: 'Date & countdown', desc: 'Save the date, live countdown and the calendar with a heart on your day.', section: 'event', fields: [
+    { id: 'date', icon: '📅', title: 'Save the date', desc: 'Desk calendar whose pages turn while scrolling, ending on your month with the day circled.', section: 'event', fields: [
       { path: 'event.enabled', label: 'Show this section', type: 'toggle', wide: true },
-      { path: 'event.datetime', label: 'Date & time of the wedding', type: 'datetime', help: 'Used for the countdown, the calendar heart and “Add to calendar”.' },
+      { path: 'event.datetime', label: 'Date & time of the wedding', type: 'datetime', help: 'Used for the calendar, the countdown and “Add to calendar”.' },
       { path: 'event.durationHours', label: 'Duration (hours)', type: 'number', min: 1, step: 1 },
       { path: 'event.title', label: 'Title', type: 'text' },
-      { path: 'event.dateText', label: 'Date as written', type: 'text' },
-      { path: 'event.timeText', label: 'Time as written', type: 'text' },
-      { path: 'event.calendarButton', label: '“Add to calendar” button', type: 'text' },
-      { path: 'event.showCountdown', label: 'Show countdown', type: 'toggle' },
-      { path: 'event.showCalendar', label: 'Show calendar', type: 'toggle' },
+      { path: 'event.subtitle', label: 'Subtitle', type: 'text' },
+      { path: 'event.padLabel', label: 'Text on the calendar top', type: 'text' },
+      { path: 'event.monthsToFlip', label: 'Months to turn', type: 'number', min: 1, step: 1, help: 'How many calendar pages turn before your month.' },
       { path: 'event.weekStartsMonday', label: 'Week starts on Monday', type: 'toggle' },
-      { path: 'event.days', label: 'Label: days', type: 'text' },
-      { path: 'event.hours', label: 'Label: hours', type: 'text' },
-      { path: 'event.minutes', label: 'Label: minutes', type: 'text' },
-      { path: 'event.seconds', label: 'Label: seconds', type: 'text' }
+      { path: 'event.pearls', label: 'Decoration beside the calendar', type: 'image', wide: true },
+      { path: 'event.dateText', label: 'Date as written', type: 'text' },
+      { path: 'event.timeText', label: 'Line under the date', type: 'text' },
+      { path: 'event.calendarButton', label: '“Add to calendar” button', type: 'text' }
     ] },
-    { id: 'schedule', icon: '🕰️', title: 'Program', desc: 'Optional timeline of the evening.', section: 'schedule', fields: [
+    { id: 'schedule', icon: '🕰️', title: 'The evening', desc: 'Timeline of the night on cream paper.', section: 'schedule', fields: [
       { path: 'schedule.enabled', label: 'Show this section', type: 'toggle', wide: true },
       { path: 'schedule.title', label: 'Title', type: 'text' },
       { path: 'schedule.subtitle', label: 'Subtitle', type: 'text' },
       { path: 'schedule.items', label: 'Moments', type: 'list', wide: true, item: [['time', 'Time'], ['title', 'Title'], ['text', 'Description']] }
     ] },
-    { id: 'venue', icon: '📍', title: 'Venue', desc: 'Where the celebration takes place.', section: 'venue', fields: [
+    { id: 'venue', icon: '📍', title: 'Where', desc: 'Venue photo in an arch, address, directions and a map.', section: 'venue', fields: [
       { path: 'venue.enabled', label: 'Show this section', type: 'toggle', wide: true },
       { path: 'venue.title', label: 'Title', type: 'text' },
       { path: 'venue.name', label: 'Venue name', type: 'text' },
       { path: 'venue.image', label: 'Venue photo', type: 'image', wide: true },
       { path: 'venue.address', label: 'Address', type: 'textarea', wide: true },
-      { path: 'venue.mapsUrl', label: 'Google Maps link', type: 'text', wide: true, help: 'In Google Maps: Share → Copy link, then paste it here.' },
-      { path: 'venue.button', label: 'Button text', type: 'text' }
+      { path: 'venue.mapsUrl', label: 'Google Maps link (button)', type: 'text', wide: true, help: 'In Google Maps: Share → Copy link, then paste it here.' },
+      { path: 'venue.button', label: 'Button text', type: 'text' },
+      { path: 'venue.showMap', label: 'Show map', type: 'toggle' },
+      { path: 'venue.mapQuery', label: 'Map search (place name or address)', type: 'text', wide: true }
+    ] },
+    { id: 'dress', icon: '👗', title: 'Dress code', desc: 'On red silk.', section: 'dress', fields: [
+      { path: 'dress.enabled', label: 'Show this section', type: 'toggle', wide: true },
+      { path: 'dress.title', label: 'Title', type: 'text' },
+      { path: 'dress.text', label: 'Text', type: 'textarea', wide: true },
+      { path: 'dress.background', label: 'Background', type: 'image', wide: true }
+    ] },
+    { id: 'wishes', icon: '🎁', title: 'A few wishes', desc: 'Paper cards: gifts, children, photos, contact…', section: 'wishes', fields: [
+      { path: 'wishes.enabled', label: 'Show this section', type: 'toggle', wide: true },
+      { path: 'wishes.title', label: 'Title', type: 'text', wide: true },
+      { path: 'wishes.items', label: 'Cards', type: 'list', wide: true, item: [['title', 'Title'], ['text', 'Text']] }
+    ] },
+    { id: 'faq', icon: '❓', title: 'Questions', desc: 'Questions guests can tap to open.', section: 'faq', fields: [
+      { path: 'faq.enabled', label: 'Show this section', type: 'toggle', wide: true },
+      { path: 'faq.title', label: 'Title', type: 'text', wide: true },
+      { path: 'faq.items', label: 'Questions & answers', type: 'list', wide: true, item: [['q', 'Question'], ['a', 'Answer']] }
     ] },
     { id: 'rsvp', icon: '✉️', title: 'RSVP', desc: 'How guests answer you.', section: 'rsvp', fields: [
       { path: 'rsvp.enabled', label: 'Show this section', type: 'toggle', wide: true },
@@ -119,22 +138,30 @@
       { path: 'rsvp.thanks', label: 'Thank-you message', type: 'text' },
       { path: 'rsvp.missing', label: 'Missing info message', type: 'text', wide: true }
     ] },
-    { id: 'closing', icon: '🌹', title: 'Closing', desc: 'The last words at the bottom of the invitation.', section: 'closing', fields: [
+    { id: 'closing', icon: '🌹', title: 'Until we meet', desc: 'Countdown and your signature at the end.', section: 'closing', fields: [
       { path: 'closing.enabled', label: 'Show this section', type: 'toggle', wide: true },
-      { path: 'closing.text', label: 'Message', type: 'textarea', wide: true },
-      { path: 'closing.names', label: 'Signature', type: 'text' },
-      { path: 'closing.footer', label: 'Small footer', type: 'text' }
+      { path: 'closing.title', label: 'Title', type: 'text' },
+      { path: 'closing.withLove', label: 'Line above names', type: 'text' },
+      { path: 'closing.days', label: 'Label: days', type: 'text' },
+      { path: 'closing.hours', label: 'Label: hours', type: 'text' },
+      { path: 'closing.minutes', label: 'Label: minutes', type: 'text' },
+      { path: 'closing.seconds', label: 'Label: seconds', type: 'text' },
+      { path: 'closing.showSeconds', label: 'Show seconds', type: 'toggle' },
+      { path: 'closing.footer', label: 'Small footer', type: 'text', wide: true }
     ] },
     { id: 'style', icon: '🎨', title: 'Colors & fonts', desc: 'The look of the whole invitation.', presets: true, fields: [
       { path: 'theme.accent', label: 'Gold (main accent)', type: 'color' },
       { path: 'theme.accent2', label: 'Gold (shadow)', type: 'color' },
       { path: 'theme.background', label: 'Background', type: 'color' },
       { path: 'theme.background2', label: 'Background glow', type: 'color' },
-      { path: 'theme.text', label: 'Text', type: 'color' },
+      { path: 'theme.text', label: 'Text (pearl)', type: 'color' },
+      { path: 'theme.ink', label: 'Ink on paper', type: 'color' },
+      { path: 'theme.paper', label: 'Paper', type: 'color' },
       { path: 'theme.namesStyle', label: 'Names color', type: 'select', options: [['pearl', 'Pearl white with glow (original)'], ['gold', 'Gold']] },
       { path: 'theme.scriptFont', label: 'Names & titles font', type: 'font' },
       { path: 'theme.bodyFont', label: 'Text font', type: 'font' },
-      { path: 'theme.uiFont', label: 'Small caps / buttons font', type: 'font' }
+      { path: 'theme.uiFont', label: 'Date & small caps font', type: 'font' },
+      { path: 'theme.typingCursor', label: 'Show typing cursor on the names', type: 'toggle' }
     ] },
     { id: 'general', icon: '⚙️', title: 'Page settings', desc: 'Browser tab title, the preview text shown when you share the link, and language.', fields: [
       { path: 'meta.title', label: 'Page title', type: 'text', wide: true },
@@ -146,11 +173,11 @@
   ];
 
   const PRESETS = [
-    { name: 'Ruby (original)', c: { accent: '#e9c58f', accent2: '#b8864b', background: '#1c0508', background2: '#3b0a12', text: '#f4e6d6' }, glitter: '#c0121f' },
-    { name: 'Burgundy', c: { accent: '#f0cfa0', accent2: '#a8783f', background: '#22060f', background2: '#4a0e22', text: '#f6e9df' }, glitter: '#7d0f2c' },
-    { name: 'Midnight', c: { accent: '#e5d3b0', accent2: '#9c8558', background: '#070b18', background2: '#152044', text: '#ecebf3' }, glitter: '#1f3a8a' },
-    { name: 'Emerald', c: { accent: '#eed49a', accent2: '#a88a45', background: '#03140e', background2: '#0b3526', text: '#eef2ea' }, glitter: '#0f6a45' },
-    { name: 'Blush', c: { accent: '#f6d2b8', accent2: '#c08d6e', background: '#2a0f16', background2: '#5c2232', text: '#fbeee8' }, glitter: '#d2607b' }
+    { name: 'Ruby (original)', c: { accent: '#d9b47c', accent2: '#f3dcae', background: '#1a0207', background2: '#4a0915', text: '#f7eee6', ink: '#8f1426', paper: '#f6eee5' }, glitter: '#c0121f' },
+    { name: 'Burgundy', c: { accent: '#d6ad78', accent2: '#f4dcb6', background: '#1d0510', background2: '#4a0e22', text: '#f6e9df', ink: '#6e0f2a', paper: '#f5ece4' }, glitter: '#7d0f2c' },
+    { name: 'Midnight', c: { accent: '#cdb88f', accent2: '#ece0c2', background: '#070b18', background2: '#152044', text: '#ecebf3', ink: '#1d2c5e', paper: '#f1efea' }, glitter: '#1f3a8a' },
+    { name: 'Emerald', c: { accent: '#d4b874', accent2: '#f0e0b0', background: '#03140e', background2: '#0b3526', text: '#eef2ea', ink: '#0f4a33', paper: '#f2efe6' }, glitter: '#0f6a45' },
+    { name: 'Blush', c: { accent: '#d9a98a', accent2: '#f6d9c6', background: '#2a0f16', background2: '#5c2232', text: '#fbeee8', ink: '#9a3550', paper: '#f8eeea' }, glitter: '#d2607b' }
   ];
 
   let config = null;
@@ -358,7 +385,7 @@
     const box = el('div', { class: 'list' });
     const items = get(f.path) || [];
     items.forEach((it, i) => {
-      const row = el('div', { class: 'list__item' });
+      const row = el('div', { class: 'list__item', style: `grid-template-columns: ${f.item.length === 3 ? '90px 1fr 1.4fr' : '1fr 1.6fr'} auto` });
       f.item.forEach(([k, lbl]) => {
         row.append(el('input', { class: 'input', placeholder: lbl, 'aria-label': lbl, value: it[k] || '', dir: 'auto', oninput: (e) => { items[i][k] = e.target.value; set(f.path, items); } }));
       });

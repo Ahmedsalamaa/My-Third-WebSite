@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1c0508">
+  <meta name="theme-color" content="#1a0207">
   <title>Wedding Invitation</title>
   <meta name="description" content="You are invited">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/media/stage.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link id="fontsLink" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Corinthia:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Gilda+Display&display=swap">
+  <link id="fontsLink" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Corinthia:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Gilda+Display&family=Albert+Sans:wght@500;600&display=swap">
   <link rel="stylesheet" href="assets/css/invite.css">
   <link rel="preload" as="image" href="assets/media/glitter.jpg">
 </head>
@@ -18,12 +18,12 @@
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#e9c58f" class="g1"/><stop offset=".55" stop-color="#fff4dc"/><stop offset="1" stop-color="#b8864b" class="g2"/>
+        <stop offset="0" stop-color="#d9b47c" class="g1"/><stop offset=".55" stop-color="#fff4dc"/><stop offset="1" stop-color="#f3dcae" class="g2"/>
       </linearGradient>
     </defs>
   </svg>
 
-  <!-- ============ 1. GLITTER COVER ============ -->
+  <!-- ============ GLITTER COVER ============ -->
   <div class="cover" id="cover" role="button" tabindex="0" aria-label="Tap to open the invitation">
     <div class="cover__bg" id="coverBg" data-bg="intro.glitterImage"></div>
     <canvas class="cover__glitter" id="glitter" aria-hidden="true"></canvas>
@@ -34,8 +34,8 @@
         <p class="cover__mono" data-text="intro.monogram"></p>
       </div>
       <div class="cover__bottom">
-        <p class="cover__action" data-text="intro.action"></p>
-        <p class="cover__alt" data-text="intro.actionAlt"></p>
+        <p class="cover__action" id="coverAction"></p>
+        <p class="cover__alt" id="coverAlt"></p>
         <button class="cover__mic" id="micBtn" type="button" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
           <span data-text="intro.micLabel"></span>
@@ -44,7 +44,7 @@
     </div>
   </div>
 
-  <!-- Optional opening film (set in dashboard → Opening → Opening video) -->
+  <!-- Optional opening film (dashboard → Opening → Opening video) -->
   <div class="film" id="film" hidden>
     <video id="filmVideo" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture></video>
     <button class="film__skip" id="filmSkip" type="button">Skip ›</button>
@@ -53,7 +53,7 @@
   <canvas class="stars" id="stars" aria-hidden="true"></canvas>
 
   <main id="main">
-    <!-- ============ 2. STAGE / HERO ============ -->
+    <!-- ============ STAGE ============ -->
     <section class="hero" id="hero">
       <div class="hero__stage">
         <img class="hero__img" id="stageImg" data-src="hero.stageImage" alt="">
@@ -62,8 +62,8 @@
         <canvas class="hero__dust" id="dust" aria-hidden="true"></canvas>
         <div class="hero__shade"></div>
       </div>
-      <div class="curtain curtain--l" id="curtainL"><div class="curtain__tex" data-bg-velvet></div></div>
-      <div class="curtain curtain--r" id="curtainR"><div class="curtain__tex" data-bg-velvet></div></div>
+      <div class="curtain curtain--l" id="curtainL"><div class="curtain__tex"></div></div>
+      <div class="curtain curtain--r" id="curtainR"><div class="curtain__tex"></div></div>
 
       <div class="hero__text">
         <p class="hero__eyebrow" data-type="hero.eyebrow"></p>
@@ -79,79 +79,78 @@
       <p class="hero__scroll" data-text="hero.scrollHint"></p>
     </section>
 
-    <div class="sky" id="sky">
+    <!-- ============ LETTER ============ -->
+    <section class="silk-sec letter" data-section="letter">
+      <div class="silk-sec__bg" data-bg="letter.background"></div>
+      <article class="paper card letter__card reveal">
+        <img class="letter__pin" data-src="letter.pin" alt="">
+        <h2 class="script title ink" data-text="letter.title"></h2>
+        <p class="paper__text" data-text="letter.text"></p>
+        <p class="script letter__sig ink" data-text="letter.signature"></p>
+      </article>
+    </section>
 
-      <!-- ============ 3. STORY ============ -->
-      <section class="sec story" data-section="story">
-        <h2 class="script sec__title reveal" data-text="story.title"></h2>
-        <p class="body-text reveal" data-text="story.text"></p>
-        <img class="story__img reveal" data-src="story.image" alt="">
-        <div class="ornament reveal" id="storyOrnament" aria-hidden="true">
-          <svg viewBox="0 0 200 120">
-            <!-- interlocking hearts with flourishes -->
-            <g fill="none" stroke="url(#goldG)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path class="draw" d="M90 84 C 68 68, 62 50, 74 42 C 82 37, 90 42, 90 50 C 90 42, 98 37, 106 42 C 118 50, 112 68, 90 84 Z"/>
-              <path class="draw" d="M112 88 C 92 74, 86 58, 96 50 C 103 45, 112 49, 112 56 C 112 49, 121 45, 128 50 C 138 58, 132 74, 112 88 Z"/>
-              <path class="draw" d="M62 66 C 46 66, 36 58, 22 62 C 12 65, 10 76, 20 78 C 28 80, 30 70, 24 69" stroke-width="1.4"/>
-              <path class="draw" d="M140 70 C 156 70, 166 62, 180 66 C 190 69, 192 80, 182 82 C 174 84, 172 74, 178 73" stroke-width="1.4"/>
-              <path class="draw" d="M40 100 C 70 108, 130 108, 160 100" stroke-width="1.1" opacity=".7"/>
-            </g>
-          </svg>
+    <!-- ============ SAVE THE DATE: turning calendar pages ============ -->
+    <section class="flip" id="flip" data-section="event">
+      <div class="flip__sticky">
+        <h2 class="script title" data-text="event.title"></h2>
+        <p class="subtitle" data-text="event.subtitle"></p>
+        <div class="pad">
+          <img class="pad__pearls" data-src="event.pearls" alt="">
+          <div class="pad__head caps" data-text="event.padLabel"></div>
+          <div class="pad__pages" id="pages"></div>
         </div>
-        <p class="body-text body-text--small reveal" data-text="story.signature"></p>
-      </section>
+      </div>
+    </section>
+    <section class="when" data-section="event">
+      <p class="when__date" data-text="event.dateText"></p>
+      <p class="when__note" data-text="event.timeText"></p>
+      <button class="pill" id="addCal" type="button" data-text="event.calendarButton"></button>
+    </section>
 
-      <!-- ============ 4. SAVE THE DATE ============ -->
-      <section class="sec date" data-section="event">
-        <div class="sun reveal" aria-hidden="true">
-          <svg viewBox="0 0 120 120">
-            <g stroke="url(#goldG)" stroke-width="1.6" stroke-linecap="round">
-              <g class="sun__rays"></g>
-            </g>
-            <circle cx="60" cy="60" r="20" fill="none" stroke="url(#goldG)" stroke-width="2"/>
-            <circle cx="60" cy="60" r="14" fill="url(#goldG)" opacity=".85"/>
-          </svg>
-        </div>
-        <h2 class="script sec__title reveal" data-text="event.title"></h2>
-        <p class="date__day reveal" data-text="event.dateText"></p>
-        <p class="date__time reveal" data-text="event.timeText"></p>
+    <!-- ============ THE EVENING ============ -->
+    <section class="paper-sec" data-section="schedule">
+      <h2 class="script title ink reveal" data-text="schedule.title"></h2>
+      <p class="subtitle ink-soft reveal" data-text="schedule.subtitle"></p>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
 
-        <div class="countdown reveal" id="countdown">
-          <div><b id="cdD">0</b><span data-text="event.days"></span></div>
-          <div><b id="cdH">0</b><span data-text="event.hours"></span></div>
-          <div><b id="cdM">0</b><span data-text="event.minutes"></span></div>
-          <div><b id="cdS">0</b><span data-text="event.seconds"></span></div>
-        </div>
+    <!-- ============ WHERE ============ -->
+    <section class="dark-sec where" data-section="venue">
+      <h2 class="script title reveal" data-text="venue.title"></h2>
+      <figure class="arch reveal" id="arch"><img data-src="venue.image" alt=""></figure>
+      <h3 class="where__name reveal" data-text="venue.name"></h3>
+      <p class="where__address reveal" data-text="venue.address"></p>
+      <a class="pill reveal" id="mapsBtn" target="_blank" rel="noopener" data-text="venue.button"></a>
+      <div class="where__map reveal" id="mapBox"><iframe id="mapFrame" title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+    </section>
 
-        <div class="cal reveal" id="calendar">
-          <p class="cal__title caps" id="calTitle"></p>
-          <div class="cal__grid" id="calGrid"></div>
-        </div>
-        <button class="btn btn--ghost reveal" id="addCal" type="button" data-text="event.calendarButton"></button>
-      </section>
+    <!-- ============ DRESS CODE ============ -->
+    <section class="silk-sec dress" data-section="dress">
+      <div class="silk-sec__bg" data-bg="dress.background"></div>
+      <div class="dress__inner">
+        <h2 class="script title reveal" data-text="dress.title"></h2>
+        <p class="dress__text reveal" data-text="dress.text"></p>
+      </div>
+    </section>
 
-      <!-- ============ 5. SCHEDULE (optional) ============ -->
-      <section class="sec schedule" data-section="schedule">
-        <h2 class="script sec__title reveal" data-text="schedule.title"></h2>
-        <p class="body-text reveal" data-text="schedule.subtitle"></p>
-        <ol class="timeline" id="timeline"></ol>
-      </section>
+    <!-- ============ A FEW WISHES ============ -->
+    <section class="paper-sec" data-section="wishes">
+      <h2 class="script title ink reveal" data-text="wishes.title"></h2>
+      <div class="wishes" id="wishList"></div>
+    </section>
 
-      <!-- ============ 6. VENUE ============ -->
-      <section class="sec venue" data-section="venue">
-        <h2 class="script sec__title reveal" data-text="venue.title"></h2>
-        <figure class="venue__frame reveal"><img data-src="venue.image" alt=""></figure>
-        <h3 class="venue__name reveal" data-text="venue.name"></h3>
-        <p class="body-text reveal" data-text="venue.address"></p>
-        <a class="btn btn--gold reveal" id="mapsBtn" target="_blank" rel="noopener" data-text="venue.button"></a>
-      </section>
-    </div>
+    <!-- ============ QUESTIONS ============ -->
+    <section class="dark-sec" data-section="faq">
+      <h2 class="script title reveal" data-text="faq.title"></h2>
+      <div class="faq" id="faqList"></div>
+    </section>
 
-    <!-- ============ 7. RSVP ============ -->
+    <!-- ============ RSVP ============ -->
     <section class="rsvp" data-section="rsvp">
       <div class="rsvp__bg" data-bg="rsvp.background"></div>
       <div class="rsvp__inner">
-        <h2 class="script sec__title reveal" data-text="rsvp.title"></h2>
+        <h2 class="script title reveal" data-text="rsvp.title"></h2>
         <p class="body-text reveal" data-text="rsvp.text"></p>
         <p class="rsvp__deadline caps reveal" data-text="rsvp.deadline"></p>
         <form class="rsvp__form reveal" id="rsvpForm" novalidate>
@@ -162,18 +161,32 @@
           </div>
           <input class="field" name="guests" type="number" min="1" max="20" inputmode="numeric" id="guestsField" data-ph="rsvp.guestsPlaceholder">
           <textarea class="field" name="message" rows="2" data-ph="rsvp.messagePlaceholder"></textarea>
-          <button class="btn btn--gold" type="submit" data-text="rsvp.button"></button>
+          <button class="pill" type="submit" data-text="rsvp.button"></button>
           <p class="rsvp__status" id="rsvpStatus" role="status" aria-live="polite"></p>
         </form>
       </div>
     </section>
 
-    <!-- ============ 8. CLOSING ============ -->
-    <section class="sec closing" data-section="closing">
-      <p class="closing__text reveal" data-text="closing.text"></p>
-      <p class="script closing__names reveal" data-text="closing.names"></p>
-      <p class="closing__footer" data-text="closing.footer"></p>
+    <!-- ============ UNTIL WE MEET ============ -->
+    <section class="dark-sec until" data-section="closing">
+      <h2 class="script title reveal" data-text="closing.title"></h2>
+      <div class="countdown reveal" id="countdown">
+        <div><b id="cdD">0</b><span data-text="closing.days"></span></div>
+        <i>:</i>
+        <div><b id="cdH">0</b><span data-text="closing.hours"></span></div>
+        <i>:</i>
+        <div><b id="cdM">0</b><span data-text="closing.minutes"></span></div>
+        <i class="cd-sec">:</i>
+        <div class="cd-sec"><b id="cdS">0</b><span data-text="closing.seconds"></span></div>
+      </div>
+      <p class="until__love reveal" data-text="closing.withLove"></p>
+      <p class="until__names reveal">
+        <span class="script" data-text="hero.name1"></span>
+        <span class="until__amp" data-text="hero.ampersand"></span>
+        <span class="script" data-text="hero.name2"></span>
+      </p>
     </section>
+    <footer class="foot" data-text="closing.footer"></footer>
   </main>
 
   <!-- Music -->

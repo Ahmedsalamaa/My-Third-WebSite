@@ -43,7 +43,7 @@
     const og = $('meta[property="og:image"]'); if (og && get('hero.stageImage') && !get('hero.stageImage').startsWith('blob:')) og.content = get('hero.stageImage');
 
     // theme
-    const vars = { '--accent': t.accent, '--accent2': t.accent2, '--bg': t.background, '--bg2': t.background2, '--text': t.text, '--glitter': get('intro.glitterColor') };
+    const vars = { '--accent': t.accent, '--accent2': t.accent2, '--bg': t.background, '--bg2': t.background2, '--text': t.text, '--ink': t.ink, '--paper': t.paper, '--glitter': get('intro.glitterColor') };
     for (const k in vars) if (vars[k]) root.style.setProperty(k, vars[k]);
     root.style.setProperty('--script', `"${t.scriptFont}", "Cormorant Garamond", serif`);
     root.style.setProperty('--body', `"${t.bodyFont}", "Cormorant Garamond", serif`);
@@ -52,7 +52,10 @@
     root.style.setProperty('--script-style', sf && !sf.italic ? 'normal' : 'italic');
     root.style.setProperty('--script-scale', (sf && sf.scale) || 1);
     document.body.classList.toggle('names-pearl', (t.namesStyle || 'pearl') === 'pearl');
-    const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont]);
+    document.body.classList.toggle('names-gold', t.namesStyle === 'gold');
+    document.body.classList.toggle('show-caret', !!t.typingCursor);
+    document.body.classList.toggle('no-seconds', !get('closing.showSeconds'));
+    const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont, 'Albert Sans']);
     if ($('#fontsLink').href !== furl) $('#fontsLink').href = furl;
     const tc = $('meta[name="theme-color"]'); if (tc) tc.content = t.background || '#1c0508';
     const g1 = $('#goldG .g1'), g2 = $('#goldG .g2');
@@ -83,7 +86,6 @@
       el.style.backgroundImage = v ? `url("${v}")` : 'none';
     });
     paintCurtains();
-    const vf = $('.venue__frame'); if (vf) vf.classList.toggle('is-off', !get('venue.image'));
 
     // sections on/off
     $$('[data-section]').forEach((el) => {
@@ -94,40 +96,58 @@
     // hero options
     $('#stageImg').style.objectPosition = get('hero.imagePosition') || '50% 70%';
     document.body.classList.toggle('no-curtains', get('hero.curtains') === false);
-    root.style.setProperty('--hero-h', (Number(get('hero.height')) || 150) + 'svh');
+    root.style.setProperty('--hero-h', (Number(get('hero.height')) || 100) + 'svh');
     $('#beam').classList.toggle('on', !!get('hero.beam'));
     $('#ring').classList.toggle('on', !!get('hero.ring'));
 
-    // event
-    $('#countdown').classList.toggle('is-off', get('event.showCountdown') === false);
-    $('#calendar').classList.toggle('is-off', get('event.showCalendar') === false);
-    buildCalendar();
+    // save the date: calendar pages
+    buildFlip();
     tickCountdown();
 
-    // schedule
+    // the evening
     const tl = $('#timeline');
     tl.innerHTML = '';
     (get('schedule.items') || []).forEach((it) => {
-      const li = document.createElement('li');
-      li.className = 'reveal in';
-      const tm = document.createElement('time'); tm.textContent = it.time || '';
-      const box = document.createElement('div');
-      const b = document.createElement('b'); b.textContent = it.title || '';
-      const sp = document.createElement('span'); sp.textContent = it.text || '';
-      box.append(b, sp); li.append(tm, box); tl.append(li);
+      const li = el('li', '', el('time', '', it.time), el('div', 'tl__body', el('b', '', it.title), el('span', '', it.text)));
+      tl.append(li); observe(li);
     });
 
-    // venue
+    // where
     const maps = $('#mapsBtn');
     const mu = get('venue.mapsUrl');
     if (mu) { maps.href = mu; maps.classList.remove('is-off'); } else maps.classList.add('is-off');
+    $('#arch').classList.toggle('is-off', !get('venue.image'));
+    const mq = get('venue.mapQuery') || get('venue.address');
+    const showMap = get('venue.showMap') !== false && mq;
+    $('#mapBox').classList.toggle('is-off', !showMap);
+    if (showMap) {
+      const url = 'https://maps.google.com/maps?q=' + encodeURIComponent(mq) + '&z=15&output=embed';
+      if ($('#mapFrame').getAttribute('src') !== url) $('#mapFrame').src = url;
+    }
+
+    // a few wishes
+    const wl = $('#wishList');
+    wl.innerHTML = '';
+    (get('wishes.items') || []).forEach((it) => {
+      const c = el('article', 'paper card reveal', el('b', '', it.title), el('p', '', it.text));
+      wl.append(c); observe(c);
+    });
+
+    // questions
+    const fl = $('#faqList');
+    fl.innerHTML = '';
+    (get('faq.items') || []).forEach((it) => {
+      const d = el('details', 'reveal', el('summary', '', it.q), el('p', '', it.a));
+      fl.append(d); observe(d);
+    });
 
     // rsvp
     $('#guestsField').classList.toggle('is-off', !get('rsvp.askGuests'));
 
     // intro
     const canMic = get('intro.enableMic') && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.isSecureContext;
-    $('#micBtn').hidden = !canMic;
+    $('#micBtn').hidden = !canMic || !!mic || get('intro.autoMic') !== false;
+    setCoverText();
 
     // music
     const src = get('music.src');
@@ -139,7 +159,6 @@
     audio.volume = Math.max(0, Math.min(1, Number(get('music.volume') ?? 0.6)));
     $('#musicBtn').hidden = !opened || !src || get('music.enabled') === false || get('music.showButton') === false;
 
-    buildSunRays();
     if (glitter) glitter.recolor();
   }
 
@@ -220,52 +239,88 @@
     document.body.classList.remove('is-locked');
   }
 
-  function buildSunRays() {
-    const g = $('.sun__rays');
-    if (!g || g.childElementCount) return;
-    for (let i = 0; i < 24; i++) {
-      const a = (i / 24) * Math.PI * 2;
-      const r1 = 26, r2 = i % 2 ? 44 : 56;
-      const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      l.setAttribute('x1', 60 + Math.cos(a) * r1); l.setAttribute('y1', 60 + Math.sin(a) * r1);
-      l.setAttribute('x2', 60 + Math.cos(a) * r2); l.setAttribute('y2', 60 + Math.sin(a) * r2);
-      g.append(l);
-    }
+  function el(tag, cls, ...kids) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    kids.forEach((k) => n.append(k && k.nodeType ? k : document.createTextNode(k == null ? '' : String(k))));
+    return n;
   }
 
-  /* ---------------- calendar & countdown ---------------- */
-  function buildCalendar() {
+  function setCoverText() {
+    const blow = !!mic;
+    $('#coverAction').textContent = get(blow ? 'intro.action' : 'intro.touchAction') || get('intro.action') || '';
+    $('#coverAlt').textContent = get(blow ? 'intro.actionAlt' : 'intro.touchActionAlt') || '';
+  }
+
+  /* ---------------- Save the date: pages that turn while scrolling ---------------- */
+  let flipPages = [];
+  function buildFlip() {
+    const box = $('#pages');
+    box.innerHTML = '';
+    flipPages = [];
     const d = eventDate();
-    const grid = $('#calGrid');
-    grid.innerHTML = '';
     if (!d) return;
     const lang = get('meta.lang') || 'en';
-    const y = d.getFullYear(), m = d.getMonth();
-    let title;
-    try { title = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric' }).format(d); } catch (e) { title = d.toDateString(); }
-    $('#calTitle').textContent = title;
+    const n = Math.max(1, Math.min(12, Number(get('event.monthsToFlip')) || 5));
     const monStart = get('event.weekStartsMonday') !== false;
     const ar = lang.startsWith('ar');
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(2024, 0, (monStart ? 1 : 7) + i); // 1 Jan 2024 = Monday
-      let n;
-      try { n = new Intl.DateTimeFormat(lang, { weekday: ar ? 'narrow' : 'short' }).format(day); } catch (e) { n = ''; }
-      const c = document.createElement('div'); c.className = 'wd'; c.textContent = ar ? n : n.slice(0, 2);
-      grid.append(c);
-    }
-    const first = new Date(y, m, 1).getDay(); // 0 = Sunday
-    const offset = monStart ? (first + 6) % 7 : first;
-    const days = new Date(y, m + 1, 0).getDate();
-    for (let i = 0; i < offset; i++) grid.append(document.createElement('div'));
     let nf; try { nf = new Intl.NumberFormat(lang); } catch (e) { nf = { format: String }; }
-    for (let i = 1; i <= days; i++) {
-      const c = document.createElement('div');
-      c.className = 'd' + (i === d.getDate() ? ' is-day' : '');
-      c.textContent = nf.format(i);
-      grid.append(c);
+    const fmt = (o, dt) => { try { return new Intl.DateTimeFormat(lang, o).format(dt); } catch (e) { return ''; } };
+    for (let k = 0; k < n; k++) {
+      const md = new Date(d.getFullYear(), d.getMonth() - (n - 1 - k), 1);
+      const y = md.getFullYear(), m = md.getMonth();
+      const grid = el('div', 'page__grid');
+      for (let i = 0; i < 7; i++) {
+        const wd = fmt({ weekday: ar ? 'narrow' : 'short' }, new Date(2024, 0, (monStart ? 1 : 7) + i));
+        grid.append(el('div', 'wd', ar ? wd : wd.slice(0, 1).toUpperCase()));
+      }
+      const first = new Date(y, m, 1).getDay();
+      const offset = monStart ? (first + 6) % 7 : first;
+      const days = new Date(y, m + 1, 0).getDate();
+      for (let i = 0; i < offset; i++) grid.append(el('div', ''));
+      for (let i = 1; i <= days; i++) {
+        const dow = new Date(y, m, i).getDay();
+        const c = el('div', 'd' + (dow === 0 || dow === 6 ? ' we' : ''), nf.format(i));
+        if (k === n - 1 && i === d.getDate()) {
+          c.insertAdjacentHTML('beforeend', '<svg class="page__ring" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13.5"/></svg>');
+        }
+        grid.append(c);
+      }
+      const page = el('div', 'page paper',
+        el('p', 'page__month', fmt({ month: 'long' }, md)),
+        el('p', 'page__year', nf.format(y).replace(/[,.\s]/g, '')),
+        grid);
+      page.style.zIndex = String(n - k);
+      box.append(page);
+      flipPages.push(page);
     }
+    $('#flip').style.setProperty('--flip-h', (100 + (n - 1) * 55 + 60) + 'svh');
+    updateFlip();
   }
 
+  function updateFlip() {
+    const sec = $('#flip');
+    if (!flipPages.length || sec.classList.contains('is-off')) return;
+    const r = sec.getBoundingClientRect();
+    const span = sec.offsetHeight - innerHeight;
+    const prog = Math.max(0, Math.min(1, -r.top / Math.max(1, span)));
+    const n = flipPages.length;
+    flipPages.forEach((pg, k) => {
+      if (k === n - 1) { pg.style.transform = ''; pg.style.opacity = ''; return; }
+      // page k turns during its slice of the scroll
+      const a = k / (n - 1) * 0.9, b2 = (k + 1) / (n - 1) * 0.9;
+      const t = Math.max(0, Math.min(1, (prog - a) / (b2 - a)));
+      const e = t * t * (3 - 2 * t);
+      pg.style.transform = `rotateX(${-e * 105}deg)`;
+      pg.style.opacity = String(1 - Math.max(0, (e - 0.65) / 0.35));
+      pg.style.visibility = e >= 1 ? 'hidden' : '';
+    });
+    sec.classList.toggle('is-done', prog > 0.93);
+  }
+  addEventListener('scroll', () => requestAnimationFrame(updateFlip), { passive: true });
+  addEventListener('resize', updateFlip);
+
+  /* ---------------- countdown ---------------- */
   function tickCountdown() {
     const d = eventDate();
     let diff = d ? Math.max(0, d - Date.now()) : 0;
@@ -466,6 +521,7 @@
       mic = { stream, ac };
       btn.classList.add('is-listening');
       btn.hidden = true;
+      setCoverText();
       let loud = 0, last = performance.now();
       const loop = (now) => {
         if (!mic) return;
@@ -484,6 +540,7 @@
       requestAnimationFrame(loop);
     } catch (err) {
       btn.hidden = true;
+      setCoverText();
     }
   }
   function stopMic() {
@@ -611,12 +668,17 @@
   }
 
   /* ---------------- scroll reveal ---------------- */
+  let io = null;
+  function observe(node) {
+    if (!io) { node.classList.add('in'); return; }
+    io.observe(node);
+  }
   function startReveal() {
-    if (!('IntersectionObserver' in window) || reduceMotion) { $$('.reveal').forEach((e) => e.classList.add('in')); return; }
-    const io = new IntersectionObserver((entries) => {
+    if (!('IntersectionObserver' in window) || reduceMotion) { $$('.reveal, .timeline li').forEach((e) => e.classList.add('in')); return; }
+    io = new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-    }, { threshold: 0.15, rootMargin: '0px 0px -5% 0px' });
-    $$('.reveal').forEach((e) => io.observe(e));
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    $$('.reveal, .timeline li').forEach((e) => io.observe(e));
   }
 
   /* ---------------- RSVP ---------------- */
@@ -680,12 +742,12 @@
     if (IS_PREVIEW) {
       try { config = await S.resolveMedia(await S.loadDraft()); } catch (e) { /* fall back to published */ }
     }
+    startReveal();
     apply(config);
 
     $('#addCal').addEventListener('click', downloadIcs);
     setupRsvp();
     startStars();
-    startReveal();
 
     const cover = $('#cover');
     const introOn = get('intro.enabled') !== false && !SKIP_INTRO;
