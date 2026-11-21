@@ -137,8 +137,8 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
 .is-open .hero__img { transform: scale(1); filter: brightness(1) saturate(1); }
 /* opening film played inside the stage (dashboard → Opening → Opening video) */
 .hero__film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
-.has-film .hero__film { display: block; }
-.has-film .hero__img, .has-film .curtain { display: none; }
+.film-playing .hero__film { display: block; }
+.film-playing .hero__img, .film-playing .curtain, .film-playing .hero__dust { display: none; }
 .cover.is-fast { transition: opacity .35s ease; opacity: 0; pointer-events: none; }
 
 .hero__beam {
@@ -219,6 +219,8 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
   -webkit-text-fill-color: initial;
 }
 @keyframes caret { 50% { opacity: 0; } }
+.fade-wait { opacity: 0; transform: translateY(6px); transition: opacity 1s ease, transform 1.2s var(--ease); }
+.fade-wait.fade-in { opacity: 1; transform: none; }
 .show-caret .caret { display: inline-block; }
 .hero__scroll {
   position: absolute; z-index: 4; left: 0; right: 0; top: calc(100svh - env(safe-area-inset-bottom) - 74px);
@@ -281,12 +283,12 @@ main { position: relative; z-index: 1; }
 .silk-sec::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(var(--bg), rgba(0,0,0,0) 22%, rgba(0,0,0,0) 72%, var(--bg)); }
 .letter { height: 130svh; padding: 0; }
 .letter__sticky { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; justify-content: center; padding-top: 22svh; z-index: 1; }
-.env { position: relative; width: min(300px, 80vw); aspect-ratio: 700 / 794; }
+.env { position: relative; width: min(310px, 82vw); aspect-ratio: 896 / 997; }
 .env img.env__back, .env img.env__front { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 18px 26px rgba(0,0,0,.45)); }
-.env__front { z-index: 3; clip-path: polygon(0 33%, 50% 62%, 100% 33%, 100% 100%, 0 100%); }
+.env__front { z-index: 3; clip-path: polygon(0 41%, 46% 61%, 50% 59%, 54% 61%, 100% 41%, 100% 100%, 0 100%); }
 .env__back { z-index: 1; }
 .letter__card {
-  position: absolute; z-index: 2; left: 13%; right: 13%; bottom: 18%;
+  position: absolute; z-index: 2; left: 13%; right: 13%; bottom: 36%;
   padding: 34px 16px 30px; will-change: transform;
 }
 .env.no-env .letter__card { position: relative; left: auto; right: auto; bottom: auto; }
