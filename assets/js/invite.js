@@ -360,10 +360,12 @@
         }
         grid.append(c);
       }
-      const page = el('div', 'page paper',
-        el('p', 'page__month', fmt({ month: 'long' }, md)),
-        el('p', 'page__year', nf.format(y).replace(/[,.\s]/g, '')),
-        grid);
+      const page = el('div', 'page',
+        el('div', 'page__front paper',
+          el('p', 'page__month', fmt({ month: 'long' }, md)),
+          el('p', 'page__year', nf.format(y).replace(/[,.\s]/g, '')),
+          grid),
+        el('div', 'page__back'));
       page.style.zIndex = String(n - k);
       box.append(page);
       flipPages.push(page);
