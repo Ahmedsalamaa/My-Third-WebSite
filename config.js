@@ -34,6 +34,7 @@ window.INVITE_CONFIG = {
     "actionAlt": "or simply tap",
     "glitterImage": "assets/media/glitter.jpg",
     "glitterColor": "#c0121f",
+    "curtainColor": "#8a0a18",
     "enableMic": true,
     "micLabel": "Use microphone to blow",
     "video": ""
@@ -41,6 +42,7 @@ window.INVITE_CONFIG = {
   "hero": {
     "stageImage": "assets/media/stage.jpg",
     "imagePosition": "50% 70%",
+    "height": 150,
     "eyebrow": "Together with their families",
     "name1": "Ahmed",
     "ampersand": "&",

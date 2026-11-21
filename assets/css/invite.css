@@ -70,6 +70,7 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
   text-shadow: 0 2px 14px rgba(40, 0, 4, .85);
   transition: opacity .6s ease;
 }
+.cover__top { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .cover__hint { font-style: italic; font-size: 19px; margin: 0; color: #fff3ea; opacity: .92; }
 .cover__mono {
   font-family: var(--ui); letter-spacing: .3em; font-size: 15px; margin: 0;
@@ -111,15 +112,15 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
 
 /* ---------- 2. Stage / hero ---------- */
 .hero {
-  position: relative; height: 100svh; min-height: 560px; overflow: hidden;
+  position: relative; height: var(--hero-h, 150svh); min-height: 560px; overflow: hidden;
   background: #120204;
 }
 .hero__stage { position: absolute; inset: 0; }
 .hero__img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: 50% 70%;
-  transform: scale(1.14); filter: brightness(.45) saturate(.9);
-  transition: transform 7s var(--ease), filter 3.5s ease;
+  transform: scale(1.12); filter: brightness(.22) saturate(.85);
+  transition: transform 9s var(--ease), filter 5s ease;
 }
 .is-open .hero__img { transform: scale(1); filter: brightness(1) saturate(1); }
 
@@ -162,14 +163,15 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
     repeating-linear-gradient(90deg, rgba(30,0,4,.5) 0%, rgba(150,14,30,.0) 3%, rgba(214,40,56,.42) 5.6%, rgba(150,14,30,0) 8.4%, rgba(30,0,4,.55) 13.6%),
     linear-gradient(90deg, #4d040b, #8f0d1b 50%, #4d040b);
   box-shadow: 0 0 50px rgba(0,0,0,.75);
-  transition: width 2.6s cubic-bezier(.65, 0, .25, 1), border-radius 2.6s ease;
+  transition: width 3.6s cubic-bezier(.55, 0, .2, 1), border-radius 3.6s ease;
 }
 .curtain--l { left: 0; border-bottom-right-radius: 0; }
 .curtain--r { right: 0; }
 .curtain__tex {
-  position: absolute; inset: 0; mix-blend-mode: soft-light; opacity: .55;
-  background-size: 160px 160px;
+  position: absolute; inset: 0;
+  background-size: 100% 100%; background-repeat: no-repeat;
 }
+.curtain--r .curtain__tex { transform: scaleX(-1); }
 .curtain--l::after, .curtain--r::after {
   content: ""; position: absolute; top: 0; bottom: 0; width: 14px;
   background: linear-gradient(90deg, rgba(0,0,0,.5), transparent);
@@ -185,20 +187,19 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
   position: absolute; z-index: 4; left: 0; right: 0; top: calc(env(safe-area-inset-top) + 7vh);
   text-align: center; padding: 0 22px;
 }
-.hero__eyebrow { margin: 0 0 4px; font-style: italic; font-size: 20px; color: var(--text); opacity: 0; }
+.hero__eyebrow { margin: 0 0 4px; font-style: italic; font-size: 20px; color: var(--text); min-height: 1.5em; }
 .hero__names { margin: 0; font-weight: 400; line-height: 1; display: flex; flex-direction: column; align-items: center; }
-.hero__name { font-size: clamp(54px, 16vw, 92px); padding: 0 .12em .06em; display: inline-block; }
-.hero__name { background: none; animation: none; color: var(--accent); }
-.hero__name .l {
-  display: inline-block; opacity: 0; transform: translateY(.18em); filter: blur(6px);
-  background: var(--gold-grad); background-size: 300% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  padding: 0 .04em .1em; margin: 0 -.04em;
+.hero__name { font-weight: 600; font-size: clamp(62px, 19vw, 104px); padding: 0 .12em .06em; display: inline-block; min-height: 1.1em; }
+.hero__amp { font-family: var(--script); font-style: var(--script-style, italic); font-size: 30px; color: var(--accent); margin: 4px 0; min-height: 1.1em; }
+.hero__date { margin: 14px 0 0; font-size: 13px; color: var(--text); min-height: 1.4em; }
+.caret {
+  display: inline-block; width: 2px; height: .9em; margin-inline-start: 2px; vertical-align: -.08em;
+  background: var(--accent); animation: caret .9s steps(1) infinite;
+  -webkit-text-fill-color: initial;
 }
-.hero__amp { font-family: var(--script); font-style: var(--script-style, italic); font-size: 30px; color: var(--accent); opacity: 0; margin: 4px 0; }
-.hero__date { margin: 14px 0 0; font-size: 13px; color: var(--text); opacity: 0; }
+@keyframes caret { 50% { opacity: 0; } }
 .hero__scroll {
-  position: absolute; z-index: 4; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 18px);
+  position: absolute; z-index: 4; left: 0; right: 0; top: calc(100svh - env(safe-area-inset-bottom) - 74px);
   margin: 0; text-align: center; font-style: italic; font-size: 15px; color: #fff0e6; opacity: 0;
 }
 .hero__scroll::after {
@@ -207,11 +208,7 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
 }
 @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
 
-.is-revealed .hero__eyebrow { animation: fadeUp 1.2s var(--ease) forwards; }
-.is-revealed .hero__name .l { animation: letter 1s var(--ease) forwards; }
-.is-revealed .hero__amp { animation: fadeUp 1s var(--ease) forwards; animation-delay: .9s; }
-.is-revealed .hero__date { animation: fadeUp 1.2s var(--ease) forwards; animation-delay: 2.2s; }
-.is-revealed .hero__scroll { animation: fadeIn 1.4s ease forwards; animation-delay: 3.2s; }
+.is-typed .hero__scroll { animation: fadeIn 1.4s ease forwards; }
 @keyframes letter { to { opacity: 1; transform: none; filter: none; } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes fadeIn { to { opacity: 1; } }
