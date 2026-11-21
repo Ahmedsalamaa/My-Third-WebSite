@@ -61,7 +61,7 @@ window.INVITE_CONFIG = {
     "name2": "Nada",
     "invite": "invite you to celebrate their wedding",
     "dateLine": "03 12 2026",
-    "place": "Hayah Hall, Cairo",
+    "place": "Mirage Hall, Cairo",
     "scrollHint": "",
     "curtains": true,
     "beam": false,
@@ -85,7 +85,7 @@ window.INVITE_CONFIG = {
     "subtitle": "Turn the pages to our day",
     "padLabel": "A & N",
     "pearls": "assets/media/pearls-strand.webp",
-    "monthsToFlip": 5,
+    "monthsToFlip": 4,
     "weekStartsMonday": true,
     "dateText": "Thursday, 3 December 2026",
     "timeText": "7:00 PM",
@@ -97,12 +97,12 @@ window.INVITE_CONFIG = {
     "subtitle": "How the night will unfold",
     "items": [
       {
-        "time": "19:00",
+        "time": "7:00 PM",
         "title": "Welcome",
         "text": "Meet your hosts and fellow guests"
       },
       {
-        "time": "21:00",
+        "time": "08:00 PM",
         "title": "Dinner",
         "text": "An evening together"
       }
@@ -112,12 +112,12 @@ window.INVITE_CONFIG = {
     "enabled": true,
     "title": "Where",
     "image": "assets/media/venue.jpg",
-    "name": "Hayah Hall",
-    "address": "Air Force House, Salah Salem Road\n— after Al Tayaran Street",
+    "name": "Mirage Hall",
+    "address": "Transportation Officers House, Nile Corniche\n— in front of Mohamed Ali Palace",
     "button": "Get directions",
-    "mapsUrl": "https://maps.app.goo.gl/zFf9tz8n2rCapPnB8?g_st=ic",
+    "mapsUrl": "https://maps.app.goo.gl/T1HqiYZGamS7b2uT9?g_st=ic",
     "showMap": true,
-    "mapQuery": "Air Force House, Salah Salem Road, Cairo"
+    "mapQuery": "Transportation Officers House, Nile Corniche, Cairo"
   },
   "dress": {
     "enabled": true,
