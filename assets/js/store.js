@@ -112,14 +112,16 @@
 
   /* Google Fonts offered in the dashboard. `italic: false` = the font has no italic style. */
   Store.FONTS = {
+    'Corinthia': { spec: 'wght@400;700', italic: false, scale: 1.35 },
     'Cormorant Garamond': { spec: 'ital,wght@0,400;0,500;0,600;1,400;1,500;1,600', italic: true },
+    'Gilda Display': { spec: '', italic: false },
     'Cormorant SC': { spec: 'wght@400;500', italic: false },
     'Playfair Display': { spec: 'ital,wght@0,400;0,500;1,400;1,500', italic: true },
     'Bodoni Moda': { spec: 'ital,wght@0,400;0,500;1,400;1,500', italic: true },
     'EB Garamond': { spec: 'ital,wght@0,400;0,500;1,400;1,500', italic: true },
-    'Pinyon Script': { spec: '', italic: false },
-    'Great Vibes': { spec: '', italic: false },
-    'Parisienne': { spec: '', italic: false },
+    'Pinyon Script': { spec: '', italic: false, scale: 1.05 },
+    'Great Vibes': { spec: '', italic: false, scale: 1.12 },
+    'Parisienne': { spec: '', italic: false, scale: 1.08 },
     'Italiana': { spec: '', italic: false },
     'Jost': { spec: 'wght@300;400;500', italic: false },
     'Amiri': { spec: 'ital,wght@0,400;0,700;1,400', italic: true },

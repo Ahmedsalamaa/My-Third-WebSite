@@ -31,7 +31,9 @@
       { path: 'hero.name1', label: 'First name', type: 'text' },
       { path: 'hero.name2', label: 'Second name', type: 'text' },
       { path: 'hero.ampersand', label: 'Between names', type: 'text', help: '“&”, “and”, “و” …' },
-      { path: 'hero.dateLine', label: 'Date line', type: 'text' },
+      { path: 'hero.invite', label: 'Line under names', type: 'text', help: 'e.g. “invite you to celebrate their wedding”' },
+      { path: 'hero.dateLine', label: 'Date line', type: 'text', help: 'e.g. 30 12 2026' },
+      { path: 'hero.place', label: 'Venue line', type: 'text' },
       { path: 'hero.scrollHint', label: 'Scroll hint', type: 'text' },
       { path: 'hero.curtains', label: 'Velvet curtains', type: 'toggle' },
       { path: 'hero.dust', label: 'Floating sparkles', type: 'toggle' },
@@ -47,7 +49,8 @@
       { path: 'intro.glitterImage', label: 'Glitter background', type: 'image', help: 'Leave the default for red glitter, or upload any texture.' },
       { path: 'intro.glitterColor', label: 'Glitter color', type: 'color' },
       { path: 'intro.curtainColor', label: 'Curtain color', type: 'color' },
-      { path: 'intro.enableMic', label: '“Blow on the glitter” microphone button', type: 'toggle', help: 'Only works on https (e.g. GitHub Pages).' },
+      { path: 'intro.enableMic', label: '“Blow on the glitter” (microphone)', type: 'toggle', help: 'Only works on https (e.g. GitHub Pages).' },
+      { path: 'intro.autoMic', label: 'Start the microphone automatically', type: 'toggle', help: 'The phone asks permission as soon as the invitation opens. Turn off to show a button instead.' },
       { path: 'intro.micLabel', label: 'Microphone button text', type: 'text' },
       { path: 'intro.video', label: 'Opening video (optional)', type: 'video', wide: true, help: 'Upload a vertical video to play instead of the built-in glitter & curtain animation (MP4, ideally under 15 MB).' }
     ] },
@@ -128,6 +131,7 @@
       { path: 'theme.background', label: 'Background', type: 'color' },
       { path: 'theme.background2', label: 'Background glow', type: 'color' },
       { path: 'theme.text', label: 'Text', type: 'color' },
+      { path: 'theme.namesStyle', label: 'Names color', type: 'select', options: [['pearl', 'Pearl white with glow (original)'], ['gold', 'Gold']] },
       { path: 'theme.scriptFont', label: 'Names & titles font', type: 'font' },
       { path: 'theme.bodyFont', label: 'Text font', type: 'font' },
       { path: 'theme.uiFont', label: 'Small caps / buttons font', type: 'font' }

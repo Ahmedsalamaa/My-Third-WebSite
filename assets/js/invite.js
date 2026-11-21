@@ -50,6 +50,8 @@
     root.style.setProperty('--ui', `"${t.uiFont}", "${t.bodyFont}", serif`);
     const sf = S.FONTS[t.scriptFont];
     root.style.setProperty('--script-style', sf && !sf.italic ? 'normal' : 'italic');
+    root.style.setProperty('--script-scale', (sf && sf.scale) || 1);
+    document.body.classList.toggle('names-pearl', (t.namesStyle || 'pearl') === 'pearl');
     const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont]);
     if ($('#fontsLink').href !== furl) $('#fontsLink').href = furl;
     const tc = $('meta[name="theme-color"]'); if (tc) tc.content = t.background || '#1c0508';
@@ -206,7 +208,7 @@
       const isName = el.classList.contains('hero__name');
       for (let i = 1; i <= chars.length; i++) {
         txt.data = chars.slice(0, i).join('');
-        await sleep(isName ? 125 : el.classList.contains('hero__date') ? 45 : 55);
+        await sleep(isName ? 125 : el.classList.contains('hero__date') ? 70 : 45);
       }
       await sleep(isName ? 260 : 160);
     }
@@ -311,7 +313,11 @@
     if (audio.paused && audio.currentTime < 0.05) audio.currentTime = Number(get('music.startAt')) || 0;
     audio.volume = 0;
     const p = audio.play();
-    if (p && p.catch) p.catch(() => setMusicUi());
+    if (p && p.catch) p.catch(() => {
+      setMusicUi();
+      const retry = () => { if (!userPaused) playMusic(); };
+      ['pointerdown', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, retry, { once: true, passive: true }));
+    });
     clearInterval(fadeTimer);
     fadeTimer = setInterval(() => {
       audio.volume = Math.min(target, audio.volume + target / 30);
@@ -365,9 +371,11 @@
       const n = Math.min(7000, Math.round((w * h) / 62));
       parts = [];
       for (let i = 0; i < n; i++) {
-        const big = Math.random() < 0.06;
+        const big = Math.random() < 0.07;
+        const yy = h * (1 - Math.pow(Math.random(), 0.75));   // denser toward the bottom
         parts.push({
-          x: Math.random() * w, y: Math.random() * h,
+          bokeh: Math.random() < 0.035,
+          x: Math.random() * w, y: yy,
           r: big ? rand(1.4, 2.6) : rand(0.5, 1.5),
           c: big ? (Math.random() < .5 ? 6 : 2) : Math.floor(Math.random() * 6),
           a: rand(.45, 1), ph: Math.random() * 6.28, sp: rand(1.2, 4.5),
@@ -402,6 +410,13 @@
           ctx.fillRect(x, y - len, Math.max(.6, p.r * .7), len);
           continue;
         }
+        if (p.bokeh) {                                     // soft round sparkle
+          ctx.fillStyle = 'rgba(255,245,240,.85)';
+          ctx.beginPath(); ctx.arc(x, y, p.r * 1.25, 0, 6.283); ctx.fill();
+          ctx.globalAlpha = a * .25;
+          ctx.beginPath(); ctx.arc(x, y, p.r * 2.6, 0, 6.283); ctx.fill();
+          continue;
+        }
         ctx.fillRect(x, y, p.r, p.r);
         if (p.r > 1.6 && a > .85) { // tiny star glint
           ctx.globalAlpha = (a - .85) * 4;
@@ -431,28 +446,37 @@
   /* ---------------- blow detection ---------------- */
   let mic = null;
   async function startMic(e) {
-    e.stopPropagation();
-    unlockAudio();
+    if (e) { e.stopPropagation(); unlockAudio(); }
     const btn = $('#micBtn');
     if (mic) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      if (opened) { stream.getTracks().forEach((t) => t.stop()); return; }
       const ac = new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') {
+        ac.resume().catch(() => {});
+        // some browsers only allow listening after a first touch
+        const wake = () => ac.resume().catch(() => {});
+        ['pointerdown', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, wake, { once: true, passive: true }));
+      }
       const src = ac.createMediaStreamSource(stream);
       const an = ac.createAnalyser(); an.fftSize = 1024;
       src.connect(an);
       const freq = new Uint8Array(an.frequencyBinCount);
       mic = { stream, ac };
       btn.classList.add('is-listening');
+      btn.hidden = true;
       let loud = 0, last = performance.now();
       const loop = (now) => {
         if (!mic) return;
         an.getByteFrequencyData(freq);
-        // blowing = strong, broad low-frequency noise
-        let sum = 0; const bins = 40;
-        for (let i = 1; i <= bins; i++) sum += freq[i];
-        const level = sum / bins / 255;
-        loud = level > 0.42 ? loud + (now - last) : Math.max(0, loud - (now - last) * 2);
+        // blowing = loud noise spread over MANY frequencies (a voice or a tone fills only a few)
+        let sum = 0, wide = 0; const from = 2, to = 64;
+        for (let i = from; i <= to; i++) { sum += freq[i]; if (freq[i] > 140) wide++; }
+        const level = sum / (to - from + 1) / 255;
+        const spread = wide / (to - from + 1);
+        const blowing = level > 0.5 && spread > 0.7;
+        loud = blowing ? loud + (now - last) : Math.max(0, loud - (now - last) * 2);
         last = now;
         if (loud > 160) { open(); return; }
         requestAnimationFrame(loop);
@@ -679,6 +703,11 @@
       cover.addEventListener('click', open);
       cover.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
       $('#micBtn').addEventListener('click', startMic);
+      // start listening for a blow as soon as the page opens
+      if (get('intro.enableMic') && get('intro.autoMic') !== false && !IS_PREVIEW && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.isSecureContext) {
+        $('#micBtn').hidden = true;
+        startMic().then(() => { if (!mic && !opened) $('#micBtn').hidden = true; });
+      }
       setTimeout(() => cover.focus({ preventScroll: true }), 50);
     }
 
