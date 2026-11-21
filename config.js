@@ -5,16 +5,16 @@
 window.INVITE_CONFIG = {
   "meta": {
     "title": "Ahmed & Nada · Wedding Invitation",
-    "description": "You are invited to the wedding of Ahmed & Sara",
+    "description": "You are invited to the wedding of Ahmed & Nada",
     "lang": "en",
     "dir": "ltr"
   },
   "theme": {
-    "accent": "#e9c58f",
-    "accent2": "#b8864b",
-    "background": "#1c0508",
-    "background2": "#3b0a12",
-    "text": "#f4e6d6",
+    "accent": "#d9b47c",
+    "accent2": "#f3dcae",
+    "background": "#1a0207",
+    "background2": "#4a0915",
+    "text": "#f7eee6",
     "ink": "#8f1426",
     "paper": "#f6eee5",
     "scriptFont": "Corinthia",
@@ -48,13 +48,13 @@ window.INVITE_CONFIG = {
     "autoMic": true,
     "micLabel": "Use microphone to blow",
     "micTapLabel": "Tap here, then blow",
-    "video": "",
+    "video": "assets/media/film.mp4",
     "namesAt": 3
   },
   "hero": {
     "stageImage": "assets/media/stage.jpg",
-    "imagePosition": "50% 70%",
-    "height": 150,
+    "imagePosition": "50% 60%",
+    "height": 100,
     "eyebrow": "Together with their families",
     "name1": "Ahmed",
     "ampersand": "&",
@@ -62,7 +62,7 @@ window.INVITE_CONFIG = {
     "invite": "invite you to celebrate their wedding",
     "dateLine": "03 12 2026",
     "place": "Hayah Hall, Cairo",
-    "scrollHint": "scroll down",
+    "scrollHint": "",
     "curtains": true,
     "beam": false,
     "ring": false,
@@ -87,33 +87,22 @@ window.INVITE_CONFIG = {
     "pearls": "assets/media/pearls-strand.webp",
     "monthsToFlip": 5,
     "weekStartsMonday": true,
-    "dateText": "Wednesday, December 03, 2026",
+    "dateText": "Thursday, 3 December 2026",
     "timeText": "7:00 PM",
-    "calendarButton": "Add to my calendar",
-    "showCountdown": true,
-    "days": "Days",
-    "hours": "Hours",
-    "minutes": "Minutes",
-    "seconds": "Seconds",
-    "showCalendar": true
+    "calendarButton": "Add to my calendar"
   },
   "schedule": {
-    "enabled": false,
+    "enabled": true,
     "title": "The evening",
     "subtitle": "How the night will unfold",
     "items": [
       {
-        "time": "8:00 PM",
+        "time": "19:00",
         "title": "Welcome",
-        "text": "Meet the families and fellow guests"
+        "text": "Meet your hosts and fellow guests"
       },
       {
-        "time": "9:00 PM",
-        "title": "Zaffa & first dance",
-        "text": "The couple's grand entrance"
-      },
-      {
-        "time": "10:00 PM",
+        "time": "21:00",
         "title": "Dinner",
         "text": "An evening together"
       }
@@ -121,11 +110,11 @@ window.INVITE_CONFIG = {
   },
   "venue": {
     "enabled": true,
-    "title": "The venue",
+    "title": "Where",
     "image": "assets/media/venue.jpg",
     "name": "Hayah Hall",
     "address": "Air Force House, Salah Salem Road\n— after Al Tayaran Street",
-    "button": "Open in maps",
+    "button": "Get directions",
     "mapsUrl": "https://maps.app.goo.gl/zFf9tz8n2rCapPnB8?g_st=ic",
     "showMap": true,
     "mapQuery": "Air Force House, Salah Salem Road, Cairo"
@@ -203,15 +192,6 @@ window.INVITE_CONFIG = {
     "withLove": "With love,",
     "curtainBackdrop": true,
     "backdrop": "assets/media/stage-curtain.jpg",
-    "footer": "Made with love",
-    "text": "Thank you for being part of our special day.\nYour presence means more to us than words can say.",
-    "names": "Ahmed & Sara"
-  },
-  "story": {
-    "enabled": true,
-    "title": "Two hearts, one story",
-    "text": "We would be honoured to share the happiest day of our lives with you.\nYour presence completes our joy.",
-    "signature": "The families of Ahmed & Sara\ninvite you to their wedding celebration.",
-    "image": ""
+    "footer": "Made with love"
   }
 };
