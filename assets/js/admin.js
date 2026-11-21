@@ -55,7 +55,8 @@
       { path: 'intro.enableMic', label: '“Blow on the glitter” (microphone)', type: 'toggle', help: 'Only works on https (e.g. GitHub Pages).' },
       { path: 'intro.autoMic', label: 'Start the microphone automatically', type: 'toggle', help: 'The phone asks permission as soon as the invitation opens. Turn off to show a button instead.' },
       { path: 'intro.micLabel', label: 'Microphone button text', type: 'text' },
-      { path: 'intro.video', label: 'Opening video (optional)', type: 'video', wide: true, help: 'Upload a vertical video to play instead of the built-in glitter & curtain animation (MP4, ideally under 15 MB).' }
+      { path: 'intro.video', label: 'Opening film (optional)', type: 'video', wide: true, help: 'A vertical film that starts on the glitter and ends on the couple (like the original). It plays on the stage instead of the built-in curtain animation.' },
+      { path: 'intro.namesAt', label: 'Names start typing after (seconds of film)', type: 'number', min: 0, step: 0.5 }
     ] },
     { id: 'music', icon: '🎵', title: 'Music', desc: 'Background music starts when the guest opens the invitation (browsers only allow sound after a tap).', fields: [
       { path: 'music.enabled', label: 'Play background music', type: 'toggle', wide: true },
@@ -150,6 +151,7 @@
       { path: 'closing.seconds', label: 'Label: seconds', type: 'text' },
       { path: 'closing.showSeconds', label: 'Show seconds', type: 'toggle' },
       { path: 'closing.curtainBackdrop', label: 'Red curtain background', type: 'toggle' },
+      { path: 'closing.backdrop', label: 'Background picture', type: 'image', wide: true, help: 'e.g. the stage with red curtains. Empty = drawn curtains.' },
       { path: 'closing.footer', label: 'Small footer', type: 'text', wide: true }
     ] },
     { id: 'style', icon: '🎨', title: 'Colors & fonts', desc: 'The look of the whole invitation.', presets: true, fields: [
@@ -164,7 +166,9 @@
       { path: 'theme.scriptFont', label: 'Names & titles font', type: 'font' },
       { path: 'theme.bodyFont', label: 'Text font', type: 'font' },
       { path: 'theme.uiFont', label: 'Date & small caps font', type: 'font' },
-      { path: 'theme.typingCursor', label: 'Show typing cursor on the names', type: 'toggle' }
+      { path: 'theme.typingCursor', label: 'Show typing cursor on the names', type: 'toggle' },
+      { path: 'theme.paperTexture', label: 'Paper texture (embossed paper)', type: 'image', wide: true, help: 'Empty = the drawn embossed oval.' },
+      { path: 'theme.laceTrim', label: 'Lace trim', type: 'image', wide: true, help: 'A wide lace strip. Empty = the drawn lace.' }
     ] },
     { id: 'general', icon: '⚙️', title: 'Page settings', desc: 'Browser tab title, the preview text shown when you share the link, and language.', fields: [
       { path: 'meta.title', label: 'Page title', type: 'text', wide: true },
