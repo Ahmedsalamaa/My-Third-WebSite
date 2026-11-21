@@ -480,6 +480,12 @@ html[dir="rtl"] .music-btn { right: auto; left: 16px; }
   .reveal { transition: none; opacity: 1; transform: none; }
 }
 
+/* titles write themselves; the line under them waits, then fades in */
+.title.to-write:not(.is-written):not(.is-writing) { color: transparent; }
+.title.to-write.reveal { opacity: 1; transform: none; }
+.title.to-write + .subtitle, .title.to-write + .body-text, .title.to-write + .dress__text { opacity: 0; transform: translateY(8px); transition: opacity .9s ease .1s, transform 1s var(--ease) .1s; }
+.title.is-written + .subtitle, .title.is-written + .body-text, .title.is-written + .dress__text { opacity: 1; transform: none; }
+
 /* ==========================================================
    Typography matched to the original, element by element.
    Script sizes are given for Corinthia and scale with the
