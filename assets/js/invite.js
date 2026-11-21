@@ -64,7 +64,12 @@
       el.classList.toggle('is-off', !v && !el.closest('.countdown'));
     });
     $$('[data-ph]').forEach((el) => { el.placeholder = get(el.dataset.ph) || ''; });
-    $$('[data-letters]').forEach((el) => splitLetters(el, get(el.dataset.letters) || ''));
+    $$('[data-type]').forEach((el) => {
+      const v = get(el.dataset.type) || '';
+      el.dataset.full = v;
+      el.classList.toggle('is-off', !v);
+      if (typeState === 'done') el.textContent = v;
+    });
     // images
     $$('[data-src]').forEach((el) => {
       const v = get(el.dataset.src);
@@ -75,7 +80,7 @@
       const v = get(el.dataset.bg);
       el.style.backgroundImage = v ? `url("${v}")` : 'none';
     });
-    $$('[data-bg-velvet]').forEach((el) => { el.style.backgroundImage = 'url("assets/media/velvet.jpg")'; });
+    paintCurtains();
     const vf = $('.venue__frame'); if (vf) vf.classList.toggle('is-off', !get('venue.image'));
 
     // sections on/off
@@ -87,6 +92,7 @@
     // hero options
     $('#stageImg').style.objectPosition = get('hero.imagePosition') || '50% 70%';
     document.body.classList.toggle('no-curtains', get('hero.curtains') === false);
+    root.style.setProperty('--hero-h', (Number(get('hero.height')) || 150) + 'svh');
     $('#beam').classList.toggle('on', !!get('hero.beam'));
     $('#ring').classList.toggle('on', !!get('hero.ring'));
 
@@ -135,20 +141,81 @@
     if (glitter) glitter.recolor();
   }
 
-  function splitLetters(el, text) {
-    if (el.dataset.value === text) return;
-    el.dataset.value = text;
-    el.textContent = '';
-    // Arabic letters must stay joined: animate whole words instead of letters.
-    const parts = hasArabic(text) ? text.split(/(\s+)/) : Array.from(text);
-    let i = 0;
-    parts.forEach((p) => {
-      const s = document.createElement('span');
-      s.className = 'l';
-      s.textContent = p === ' ' ? ' ' : p;
-      s.style.animationDelay = (el === $$('[data-letters]')[1] ? 1.1 : 0.35) + i++ * 0.09 + 's';
-      el.append(s);
-    });
+  /* ---------------- velvet curtain texture (drawn once) ---------------- */
+  let curtainUrl = '', curtainColor = '';
+  function paintCurtains() {
+    const col = get('intro.curtainColor') || '#8a0a18';
+    if (curtainUrl && curtainColor === col) return;
+    curtainColor = col;
+    const W = 360, H = 900;
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+    const img = ctx.createImageData(W, H), d = img.data;
+    const [br, bg, bb] = hexToRgb(col);
+    const ph = [Math.random() * 6, Math.random() * 6, Math.random() * 6, Math.random() * 6];
+    for (let y = 0; y < H; y++) {
+      const fy = y / H;
+      const flare = 1 + fy * 0.35;                        // folds open up toward the floor
+      const sway = Math.sin(fy * 5 + ph[3]) * 3 * fy;
+      const vshade = 0.55 + 0.45 * Math.sin(Math.min(1, fy * 1.15) * Math.PI * 0.92); // darker top & hem
+      for (let x = 0; x < W; x++) {
+        const fx = (x + sway) / W / flare;
+        let f = 0.62 * Math.sin(fx * Math.PI * 2 * 4.5 + ph[0]) + 0.24 * Math.sin(fx * Math.PI * 2 * 8.7 + ph[1]) + 0.14 * Math.sin(fx * Math.PI * 2 * 2 + ph[2]);
+        f = (f + 1) / 2;
+        const light = Math.pow(f, 2.1);
+        const sheen = Math.pow(Math.max(0, f - 0.86) / 0.14, 2) * 0.32;
+        const n = (Math.random() - 0.5) * 0.06;            // velvet grain
+        const k = (0.12 + light * 0.78 + n) * vshade;
+        const i = (y * W + x) * 4;
+        d[i] = Math.min(255, br * k + 255 * sheen * 0.55);
+        d[i + 1] = Math.min(255, bg * k + 120 * sheen * 0.35);
+        d[i + 2] = Math.min(255, bb * k + 130 * sheen * 0.4);
+        d[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    const g = ctx.createLinearGradient(W - 40, 0, W, 0);  // soft shadow on the inner edge
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.55)');
+    ctx.fillStyle = g; ctx.fillRect(W - 40, 0, 40, H);
+    curtainUrl = c.toDataURL('image/jpeg', 0.9);
+    $$('.curtain__tex').forEach((el) => { el.style.backgroundImage = `url("${curtainUrl}")`; });
+  }
+
+  /* ---------------- typewriter for the names ---------------- */
+  let typeState = 'idle';
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  async function typeHero(instant) {
+    const els = $$('#hero [data-type]');
+    if (instant || reduceMotion) {
+      els.forEach((el) => { el.textContent = el.dataset.full || ''; });
+      typeState = 'done';
+      document.body.classList.add('is-typed');
+      return;
+    }
+    typeState = 'typing';
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+    els.forEach((el) => { el.textContent = ''; });
+    for (const el of els) {
+      const full = el.dataset.full || '';
+      if (!full) continue;
+      const txt = document.createTextNode('');
+      el.textContent = '';
+      el.append(txt, caret);
+      const chars = Array.from(full);
+      const isName = el.classList.contains('hero__name');
+      for (let i = 1; i <= chars.length; i++) {
+        txt.data = chars.slice(0, i).join('');
+        await sleep(isName ? 125 : el.classList.contains('hero__date') ? 45 : 55);
+      }
+      await sleep(isName ? 260 : 160);
+    }
+    typeState = 'done';
+    els.forEach((el) => { el.textContent = el.dataset.full || ''; });
+    const last = els.filter((e) => e.dataset.full).pop();
+    if (last) { last.append(caret); setTimeout(() => caret.remove(), 2200); }
+    document.body.classList.add('is-typed');
+    document.body.classList.remove('is-locked');
   }
 
   function buildSunRays() {
@@ -329,6 +396,12 @@
         alive++;
         ctx.globalAlpha = a;
         ctx.fillStyle = palette[p.c];
+        const lt2 = falling ? ft - p.delay : 0;
+        if (lt2 > 0) {                                    // motion streak while falling
+          const len = Math.min(46, p.vy * lt2 * 0.018) + p.r;
+          ctx.fillRect(x, y - len, Math.max(.6, p.r * .7), len);
+          continue;
+        }
         ctx.fillRect(x, y, p.r, p.r);
         if (p.r > 1.6 && a > .85) { // tiny star glint
           ctx.globalAlpha = (a - .85) * 4;
@@ -345,8 +418,8 @@
     function fall() {
       falling = true; fallStart = performance.now();
       for (const p of parts) {
-        p.delay = Math.random() * 0.55 + (1 - p.y / h) * 0.25;
-        p.vy = rand(900, 2600);
+        p.delay = Math.random() * 0.9 + (p.y / h) * 0.15;
+        p.vy = rand(700, 2200);
         p.vx = rand(-30, 30);
       }
     }
@@ -427,8 +500,8 @@
     cover.classList.add('is-opening');
     if (glitter) glitter.fall();
     if (reduceMotion) { cover.classList.add('is-gone'); revealHero(true); return; }
-    setTimeout(() => revealHero(false), 1300);
-    setTimeout(() => { cover.classList.add('is-gone'); if (glitter) glitter.stop(); }, 2600);
+    setTimeout(() => revealHero(false), 1900);
+    setTimeout(() => { cover.classList.add('is-gone'); if (glitter) glitter.stop(); }, 3200);
   }
 
   function revealHero(instant) {
@@ -440,8 +513,12 @@
     } else {
       body.classList.add('is-open');
     }
-    setTimeout(() => body.classList.add('is-revealed'), instant ? 0 : 900);
-    setTimeout(() => body.classList.remove('is-locked'), instant ? 0 : 2400);
+    body.classList.add('is-revealed');
+    if (instant) { typeHero(true); body.classList.remove('is-locked'); }
+    else {
+      setTimeout(() => typeHero(false), 2300);
+      setTimeout(() => body.classList.remove('is-locked'), 9000); // safety unlock
+    }
     startDust();
   }
 

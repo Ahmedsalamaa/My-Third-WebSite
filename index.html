@@ -28,8 +28,10 @@
     <div class="cover__bg" id="coverBg" data-bg="intro.glitterImage"></div>
     <canvas class="cover__glitter" id="glitter" aria-hidden="true"></canvas>
     <div class="cover__ui">
-      <p class="cover__hint" data-text="intro.hint"></p>
-      <p class="cover__mono" data-text="intro.monogram"></p>
+      <div class="cover__top">
+        <p class="cover__hint" data-text="intro.hint"></p>
+        <p class="cover__mono" data-text="intro.monogram"></p>
+      </div>
       <div class="cover__bottom">
         <p class="cover__action" data-text="intro.action"></p>
         <p class="cover__alt" data-text="intro.actionAlt"></p>
@@ -63,13 +65,13 @@
       <div class="curtain curtain--r" id="curtainR"><div class="curtain__tex" data-bg-velvet></div></div>
 
       <div class="hero__text">
-        <p class="hero__eyebrow" data-text="hero.eyebrow"></p>
+        <p class="hero__eyebrow" data-type="hero.eyebrow"></p>
         <h1 class="hero__names">
-          <span class="script hero__name" data-letters="hero.name1"></span>
-          <span class="hero__amp" data-text="hero.ampersand"></span>
-          <span class="script hero__name" data-letters="hero.name2"></span>
+          <span class="script hero__name" data-type="hero.name1"></span>
+          <span class="hero__amp" data-type="hero.ampersand"></span>
+          <span class="script hero__name" data-type="hero.name2"></span>
         </h1>
-        <p class="hero__date caps" data-text="hero.dateLine"></p>
+        <p class="hero__date caps" data-type="hero.dateLine"></p>
       </div>
       <p class="hero__scroll" data-text="hero.scrollHint"></p>
     </section>

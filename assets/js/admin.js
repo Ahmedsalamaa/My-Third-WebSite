@@ -26,6 +26,7 @@
     { id: 'couple', icon: '💍', title: 'Couple & stage', desc: 'The first screen after the curtains open: names, date line and the photo on stage.', fields: [
       { path: 'hero.stageImage', label: 'Stage photo', type: 'image', wide: true, help: 'Tall portrait photo of the couple works best (9:16). It appears behind the curtains.' },
       { path: 'hero.imagePosition', label: 'Photo focus point', type: 'focus', help: 'Move the focus so faces stay visible on every phone.' },
+      { path: 'hero.height', label: 'Stage zoom (height)', type: 'number', min: 100, step: 10, help: '100 = whole photo on one screen. 150 = zoomed in like a film, the couple appears while scrolling.' },
       { path: 'hero.eyebrow', label: 'Line above names', type: 'text' },
       { path: 'hero.name1', label: 'First name', type: 'text' },
       { path: 'hero.name2', label: 'Second name', type: 'text' },
@@ -45,6 +46,7 @@
       { path: 'intro.actionAlt', label: 'Small text under it', type: 'text' },
       { path: 'intro.glitterImage', label: 'Glitter background', type: 'image', help: 'Leave the default for red glitter, or upload any texture.' },
       { path: 'intro.glitterColor', label: 'Glitter color', type: 'color' },
+      { path: 'intro.curtainColor', label: 'Curtain color', type: 'color' },
       { path: 'intro.enableMic', label: '“Blow on the glitter” microphone button', type: 'toggle', help: 'Only works on https (e.g. GitHub Pages).' },
       { path: 'intro.micLabel', label: 'Microphone button text', type: 'text' },
       { path: 'intro.video', label: 'Opening video (optional)', type: 'video', wide: true, help: 'Upload a vertical video to play instead of the built-in glitter & curtain animation (MP4, ideally under 15 MB).' }
