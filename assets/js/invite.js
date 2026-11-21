@@ -100,7 +100,18 @@
     $('#beam').classList.toggle('on', !!get('hero.beam'));
     $('#ring').classList.toggle('on', !!get('hero.ring'));
 
-    $('#until').classList.toggle('has-curtain', get('closing.curtainBackdrop') !== false);
+    const tex = get('theme.paperTexture'), lace = get('theme.laceTrim'), bd = get('closing.backdrop');
+    document.body.classList.toggle('has-paper-tex', !!tex);
+    if (tex) root.style.setProperty('--paper-tex', `url("${tex}")`);
+    document.body.classList.toggle('has-lace-img', !!lace);
+    if (lace) root.style.setProperty('--lace-img', `url("${lace}")`);
+    $('#until').classList.toggle('has-backdrop', !!bd);
+    if (bd) $('#until').style.setProperty('--backdrop-url', `url("${bd}")`);
+    $('#until').classList.toggle('has-curtain', !bd && get('closing.curtainBackdrop') !== false);
+    const film = get('intro.video'), hf = $('#heroFilm');
+    document.body.classList.toggle('has-film', !!film);
+    if (film && hf.getAttribute('src') !== film) { hf.src = film; hf.load(); }
+    if (!film && hf.getAttribute('src')) { hf.pause(); hf.removeAttribute('src'); }
     $('#env').classList.toggle('no-env', !get('letter.envelope'));
     updateLetter();
 
@@ -612,20 +623,18 @@
     const video = get('intro.video');
 
     if (video) {
-      cover.classList.add('is-gone');
-      const film = $('#film'), v = $('#filmVideo');
-      film.hidden = false;
-      v.src = video;
-      const finish = () => {
-        if (film.classList.contains('is-fading')) return;
-        revealHero(true);
-        film.classList.add('is-fading');
-        setTimeout(() => { film.hidden = true; v.pause(); }, 1300);
-      };
-      v.addEventListener('ended', finish, { once: true });
-      v.addEventListener('error', finish, { once: true });
-      $('#filmSkip').onclick = finish;
-      const p = v.play(); if (p && p.catch) p.catch(finish);
+      // The film starts on the same glitter frame as the cover, so the cover can simply fade away
+      const v = $('#heroFilm'), body = document.body;
+      cover.classList.add('is-fast');
+      setTimeout(() => cover.classList.add('is-gone'), 400);
+      body.classList.add('is-open', 'is-revealed');
+      startDust();
+      const fail = () => { body.classList.remove('has-film'); revealHero(true); };
+      v.currentTime = 0;
+      const p = v.play(); if (p && p.catch) p.catch(fail);
+      v.addEventListener('error', fail, { once: true });
+      setTimeout(() => typeHero(false), (Number(get('intro.namesAt')) || 3) * 1000);
+      setTimeout(() => body.classList.remove('is-locked'), 9000);
       return;
     }
 
