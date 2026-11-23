@@ -153,7 +153,7 @@ window.INVITE_CONFIG = {
     "items": [
       {
         "q": "Where is the event?",
-        "a": "Hayah Hall, Air Force House, Salah Salem Road, Cairo."
+        "a": "Mirage Hall, Transportation Officers House, Nile Corniche — in front of Mohamed Ali Palace, Cairo."
       },
       {
         "q": "Is there parking?",
