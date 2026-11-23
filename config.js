@@ -85,7 +85,7 @@ window.INVITE_CONFIG = {
     "subtitle": "Turn the pages to our day",
     "padLabel": "A & N",
     "pearls": "assets/media/pearls-strand.webp",
-    "monthsToFlip": 4,
+    "monthsToFlip": 2,
     "weekStartsMonday": true,
     "dateText": "Thursday, 3 December 2026",
     "timeText": "7:00 PM",
@@ -143,7 +143,7 @@ window.INVITE_CONFIG = {
       },
       {
         "title": "Contact",
-        "text": "Your host"
+        "text": "+201026296355"
       }
     ]
   },
