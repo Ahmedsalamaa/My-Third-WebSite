@@ -17,7 +17,7 @@ window.INVITE_CONFIG = {
     "text": "#f7eee6",
     "ink": "#8f1426",
     "paper": "#f6eee5",
-    "scriptFont": "Corinthia",
+    "scriptFont": "Playfair Display",
     "bodyFont": "Cormorant Garamond",
     "uiFont": "Gilda Display",
     "namesStyle": "pearl",
