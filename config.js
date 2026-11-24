@@ -86,7 +86,7 @@ window.INVITE_CONFIG = {
     "padLabel": "A & N",
     "pearls": "assets/media/pearls-strand.webp",
     "monthsToFlip": 1,
-    "weekStartsMonday": true,
+    "weekStartsMonday": false,
     "dateText": "Thursday, 3 December 2026",
     "timeText": "7:00 PM",
     "calendarButton": "Add to my calendar"
