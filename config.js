@@ -125,7 +125,7 @@ window.INVITE_CONFIG = {
     "mapQuery": "Transportation Officers House, Nile Corniche, Cairo"
   },
   "dress": {
-    "enabled": true,
+    "enabled": false,
     "background": "assets/media/silk.jpg",
     "title": "Dress code",
     "text": "Formal Evening Attire"
