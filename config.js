@@ -58,7 +58,7 @@ window.INVITE_CONFIG = {
     "eyebrow": "Together with their families",
     "name1": "Ahmed",
     "ampersand": "&",
-    "name2": "Nada",
+    "name2": "nada",
     "invite": "invite you to celebrate their wedding",
     "dateLine": "03 12 2026",
     "place": "Mirage Hall, Cairo",
