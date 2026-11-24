@@ -131,7 +131,7 @@ window.INVITE_CONFIG = {
     "text": "Formal Evening Attire"
   },
   "wishes": {
-    "enabled": true,
+    "enabled": false,
     "title": "A few wishes",
     "items": [
       {
