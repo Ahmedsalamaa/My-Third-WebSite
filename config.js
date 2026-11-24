@@ -73,7 +73,7 @@ window.INVITE_CONFIG = {
     "background": "assets/media/silk.jpg",
     "pin": "assets/media/pearl-pin.webp",
     "envelope": "assets/media/envelope.webp",
-    "title": "Dear family and friends",
+    "title": "Dear Family and Friends",
     "text": "We would love to celebrate this day with you.",
     "signature": "Ahmed & Nada"
   },
@@ -85,7 +85,7 @@ window.INVITE_CONFIG = {
     "subtitle": "Turn the pages to our day",
     "padLabel": "A & N",
     "pearls": "assets/media/pearls-strand.webp",
-    "monthsToFlip": 3,
+    "monthsToFlip": 0,
     "weekStartsMonday": true,
     "dateText": "Thursday, 3 December 2026",
     "timeText": "7:00 PM",
@@ -97,21 +97,26 @@ window.INVITE_CONFIG = {
     "subtitle": "How the night will unfold",
     "items": [
       {
-        "time": "7:00 PM",
+        "time": "07:00 PM",
         "title": "Welcome",
-        "text": "Meet your hosts and fellow guests"
+        "text": "We'd love to have you with us right on time."
       },
       {
-        "time": "08:00 PM",
-        "title": "Dinner",
-        "text": "An evening together"
+        "text": "Making it official with family & friends.",
+        "title": "Katb El-Kitab",
+        "time": "07:30 PM"
+      },
+      {
+        "time": "11:00 PM",
+        "title": "The End",
+        "text": "A beautiful night comes to an end, but our memories last forever."
       }
     ]
   },
   "venue": {
     "enabled": true,
     "title": "Where",
-    "image": "assets/uploads/fmwqf9pzgwotzi.jpg",
+    "image": "assets/uploads/fmwv89al648fgk.jpg",
     "name": "Mirage Hall",
     "address": "Transportation Officers House, Nile Corniche\n— in front of Mohamed Ali Palace",
     "button": "Get directions",
@@ -123,7 +128,7 @@ window.INVITE_CONFIG = {
     "enabled": true,
     "background": "assets/media/silk.jpg",
     "title": "Dress code",
-    "text": "Evening attire"
+    "text": "Formal Evening Attire"
   },
   "wishes": {
     "enabled": true,
@@ -135,20 +140,16 @@ window.INVITE_CONFIG = {
       },
       {
         "title": "Children",
-        "text": "Please contact your host about bringing children."
-      },
-      {
-        "title": "Photos",
-        "text": "Photographs are welcome."
+        "text": "Please keep your children by your side and take care of them."
       },
       {
         "title": "Contact",
-        "text": "+201026296355"
+        "text": "Ahmed +201026296355"
       }
     ]
   },
   "faq": {
-    "enabled": true,
+    "enabled": false,
     "title": "Questions",
     "items": [
       {
@@ -157,7 +158,7 @@ window.INVITE_CONFIG = {
       },
       {
         "q": "Is there parking?",
-        "a": "Yes, free parking is available at the venue."
+        "a": "Yes, there is parking available at the venue."
       }
     ]
   },
