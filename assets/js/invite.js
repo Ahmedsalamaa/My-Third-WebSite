@@ -172,6 +172,8 @@
       if ($('#mapFrame').getAttribute('src') !== url) $('#mapFrame').src = url;
     }
 
+    $('#schedNote').classList.toggle('is-off', !get('schedule.note'));
+
     // a few wishes
     const wl = $('#wishList');
     wl.innerHTML = '';

@@ -94,6 +94,7 @@
       { path: 'schedule.enabled', label: 'Show this section', type: 'toggle', wide: true },
       { path: 'schedule.title', label: 'Title', type: 'text' },
       { path: 'schedule.subtitle', label: 'Subtitle', type: 'text' },
+      { path: 'schedule.note', label: 'Note under the program', type: 'textarea', wide: true, help: 'Shown under the timeline, e.g. about children. Leave empty to hide it.' },
       { path: 'schedule.items', label: 'Moments', type: 'list', wide: true, item: [['time', 'Time'], ['title', 'Title'], ['text', 'Description']] }
     ] },
     { id: 'venue', icon: '📍', title: 'Where', desc: 'Venue photo in an arch, address, directions and a map.', section: 'venue', fields: [

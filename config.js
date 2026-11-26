@@ -109,6 +109,7 @@ window.INVITE_CONFIG = {
     "enabled": true,
     "title": "The evening",
     "subtitle": "How the night will unfold",
+    "note": "Please keep your children by your side and take care of them.",
     "items": [
       {
         "time": "07:00 PM",
