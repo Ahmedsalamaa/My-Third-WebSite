@@ -17,7 +17,7 @@ window.INVITE_CONFIG = {
     "text": "#f7eee6",
     "ink": "#8f1426",
     "paper": "#f6eee5",
-    "scriptFont": "Corinthia",
+    "scriptFont": "Playfair Display",
     "bodyFont": "Cormorant Garamond",
     "uiFont": "Gilda Display",
     "namesStyle": "pearl",
@@ -27,7 +27,7 @@ window.INVITE_CONFIG = {
   },
   "music": {
     "enabled": true,
-    "src": "assets/music/waltz.mp3",
+    "src": "assets/uploads/fmwqevuzomjazo.mp4",
     "volume": 0.6,
     "startAt": 0,
     "showButton": true
@@ -61,7 +61,7 @@ window.INVITE_CONFIG = {
     "name2": "Nada",
     "invite": "invite you to celebrate their wedding",
     "dateLine": "03 12 2026",
-    "place": "Hayah Hall, Cairo",
+    "place": "Mirage Hall, Cairo",
     "scrollHint": "scroll down",
     "curtains": true,
     "beam": false,
@@ -73,7 +73,7 @@ window.INVITE_CONFIG = {
     "background": "assets/media/silk.jpg",
     "pin": "assets/media/pearl-pin.webp",
     "envelope": "assets/media/envelope.webp",
-    "title": "Dear family and friends",
+    "title": "Dear Family and Friends",
     "text": "We would love to celebrate this day with you.",
     "signature": "Ahmed & Nada"
   },
@@ -85,8 +85,8 @@ window.INVITE_CONFIG = {
     "subtitle": "Turn the pages to our day",
     "padLabel": "A & N",
     "pearls": "assets/media/pearls-strand.webp",
-    "monthsToFlip": 5,
-    "weekStartsMonday": true,
+    "monthsToFlip": 1,
+    "weekStartsMonday": false,
     "dateText": "Thursday, 3 December 2026",
     "timeText": "7:00 PM",
     "calendarButton": "Add to my calendar"
@@ -97,36 +97,41 @@ window.INVITE_CONFIG = {
     "subtitle": "How the night will unfold",
     "items": [
       {
-        "time": "19:00",
+        "time": "07:00 PM",
         "title": "Welcome",
-        "text": "Meet your hosts and fellow guests"
+        "text": "We'd love to have you with us right on time."
       },
       {
-        "time": "21:00",
-        "title": "Dinner",
-        "text": "An evening together"
+        "text": "Making it official with family & friends.",
+        "title": "Katb El-Kitab",
+        "time": "07:30 PM"
+      },
+      {
+        "time": "11:00 PM",
+        "title": "The End",
+        "text": "A beautiful night comes to an end, but our memories last forever."
       }
     ]
   },
   "venue": {
     "enabled": true,
     "title": "Where",
-    "image": "assets/media/venue.jpg",
-    "name": "Hayah Hall",
-    "address": "Air Force House, Salah Salem Road\n— after Al Tayaran Street",
+    "image": "assets/uploads/fmwv89al648fgk.jpg",
+    "name": "Mirage Hall",
+    "address": "Transportation Officers House, Nile Corniche\n— in front of Mohamed Ali Palace",
     "button": "Get directions",
-    "mapsUrl": "https://maps.app.goo.gl/zFf9tz8n2rCapPnB8?g_st=ic",
+    "mapsUrl": "https://maps.app.goo.gl/T1HqiYZGamS7b2uT9?g_st=ic",
     "showMap": true,
-    "mapQuery": "Air Force House, Salah Salem Road, Cairo"
+    "mapQuery": "Transportation Officers House, Nile Corniche, Cairo"
   },
   "dress": {
-    "enabled": true,
+    "enabled": false,
     "background": "assets/media/silk.jpg",
     "title": "Dress code",
-    "text": "Evening attire"
+    "text": "Formal Evening Attire"
   },
   "wishes": {
-    "enabled": true,
+    "enabled": false,
     "title": "A few wishes",
     "items": [
       {
@@ -135,29 +140,25 @@ window.INVITE_CONFIG = {
       },
       {
         "title": "Children",
-        "text": "Please contact your host about bringing children."
-      },
-      {
-        "title": "Photos",
-        "text": "Photographs are welcome."
+        "text": "Please keep your children by your side and take care of them."
       },
       {
         "title": "Contact",
-        "text": "Your host"
+        "text": "Ahmed +201026296355"
       }
     ]
   },
   "faq": {
-    "enabled": true,
+    "enabled": false,
     "title": "Questions",
     "items": [
       {
         "q": "Where is the event?",
-        "a": "Hayah Hall, Air Force House, Salah Salem Road, Cairo."
+        "a": "Mirage Hall, Transportation Officers House, Nile Corniche — in front of Mohamed Ali Palace, Cairo."
       },
       {
         "q": "Is there parking?",
-        "a": "Yes, free parking is available at the venue."
+        "a": "Yes, there is parking available at the venue."
       }
     ]
   },
