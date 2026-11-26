@@ -146,6 +146,8 @@
     'Great Vibes': { spec: '', italic: false, scale: 1.12 },
     'Parisienne': { spec: '', italic: false, scale: 1.08 },
     'Italiana': { spec: '', italic: false },
+    'Italianno': { spec: '', italic: false, scale: 1.35 },
+    'Allura': { spec: '', italic: false },
     'Jost': { spec: 'wght@300;400;500', italic: false },
     'Amiri': { spec: 'ital,wght@0,400;0,700;1,400', italic: true },
     'Aref Ruqaa': { spec: 'wght@400;700', italic: false },

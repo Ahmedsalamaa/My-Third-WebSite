@@ -29,6 +29,19 @@
     return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [192, 18, 31];
   }
 
+  /* Names: capital Latin letters get their own, clearly capital script font (see theme.nameCapitals). */
+  const NAME_SEL = '.hero__name, .letter__sig, .until__names .script';
+  let capLetters = 'N';   // only these capitals get the other font (default: N, Corinthia's N looks like a small n)
+  function setName(el, str) {
+    el.textContent = '';
+    String(str).split(/([A-Z])/).forEach((part) => {
+      if (!part) return;
+      if (/^[A-Z]$/.test(part) && capLetters.includes(part)) { const c = document.createElement('span'); c.className = 'cap'; c.textContent = part; el.append(c); }
+      else el.append(document.createTextNode(part));
+    });
+  }
+  const fillAll = (els) => els.forEach((el) => { if (el.matches(NAME_SEL)) setName(el, el.dataset.full || ''); else el.textContent = el.dataset.full || ''; });
+
   /* ---------------- apply config to the page ---------------- */
   function apply(config) {
     cfg = config;
@@ -56,7 +69,12 @@
     document.body.classList.toggle('show-caret', !!t.typingCursor);
     document.body.classList.toggle('no-seconds', !get('closing.showSeconds'));
     root.style.setProperty('--heart-tilt', (Number(get('event.heartTilt')) || 0) + 'deg');
-    const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont, 'Albert Sans']);
+    const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont, 'Albert Sans', t.nameCapitals]);
+    root.style.setProperty('--caps-font', t.nameCapitals ? `"${t.nameCapitals}", var(--script)` : 'inherit');
+    const CAP_SIZE = { 'Italianno': 1, 'Pinyon Script': .66, 'Great Vibes': .78, 'Parisienne': .72, 'Allura': .8 };
+    root.style.setProperty('--caps-size', (CAP_SIZE[t.nameCapitals] || .8) + 'em');
+    capLetters = String(t.nameCapitalLetters == null ? 'N' : t.nameCapitalLetters).replace(/[^A-Za-z]/g, '').toUpperCase();
+    root.classList.toggle('has-name-caps', !!t.nameCapitals);
     if ($('#fontsLink').href !== furl) $('#fontsLink').href = furl;
     const tc = $('meta[name="theme-color"]'); if (tc) tc.content = t.background || '#1c0508';
     const g1 = $('#goldG .g1'), g2 = $('#goldG .g2');
@@ -67,7 +85,8 @@
     $$('[data-text]').forEach((el) => {
       if (el.classList.contains('is-writing')) return;   // a title is writing itself right now
       const v = get(el.dataset.text);
-      el.textContent = v == null ? '' : String(v);
+      if (el.matches(NAME_SEL)) setName(el, v == null ? '' : String(v));
+      else el.textContent = v == null ? '' : String(v);
       el.classList.toggle('is-off', !v && !el.closest('.countdown'));
     });
     $$('[data-ph]').forEach((el) => { el.placeholder = get(el.dataset.ph) || ''; });
@@ -75,7 +94,7 @@
       const v = get(el.dataset.type) || '';
       el.dataset.full = v;
       el.classList.toggle('is-off', !v);
-      if (typeState === 'done') el.textContent = v;
+      if (typeState === 'done') { if (el.matches(NAME_SEL)) setName(el, v); else el.textContent = v; }
     });
     // images
     $$('[data-src]').forEach((el) => {
@@ -237,7 +256,7 @@
   async function typeHero(instant) {
     const els = $$('#hero [data-type]');
     if (instant || reduceMotion) {
-      els.forEach((el) => { el.textContent = el.dataset.full || ''; });
+      fillAll(els);
       typeState = 'done';
       document.body.classList.add('is-typed');
       return;
@@ -262,10 +281,10 @@
     const names = els.filter((e) => e.classList.contains('hero__name'));
     for (let n = 0; n < names.length; n++) {
       const el = names[n], full = el.dataset.full || '';
-      const txt = document.createTextNode('');
-      el.append(txt, caret);
+      const inner = document.createElement('span');
+      el.append(inner, caret);
       const chars = Array.from(full);
-      for (let i = 1; i <= chars.length; i++) { txt.data = chars.slice(0, i).join(''); await sleep(95); }
+      for (let i = 1; i <= chars.length; i++) { setName(inner, chars.slice(0, i).join('')); await sleep(95); }
       if (n === 0) { show('#hero .hero__amp'); await sleep(350); }
     }
     caret.remove();
@@ -277,7 +296,7 @@
     show('#hero .hero__place');
     await sleep(900);
     typeState = 'done';
-    els.forEach((el) => { el.textContent = el.dataset.full || ''; });
+    fillAll(els);
     const last = els.filter((e) => e.dataset.full).pop();
     if (last) { last.append(caret); setTimeout(() => caret.remove(), 2200); }
     document.body.classList.add('is-typed');
