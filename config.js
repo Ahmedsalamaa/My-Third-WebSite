@@ -86,6 +86,7 @@ window.INVITE_CONFIG = {
     "padLabel": "A & N",
     "pearls": "assets/media/pearls-strand.webp",
     "monthsToFlip": 1,
+    "heartTilt": 35,
     "weekStartsMonday": false,
     "dateText": "Thursday, 3 December 2026",
     "timeText": "7:00 PM",

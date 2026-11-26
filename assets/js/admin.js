@@ -84,6 +84,7 @@
       { path: 'event.padLabel', label: 'Text on the calendar top', type: 'text' },
       { path: 'event.monthsToFlip', label: 'Months to turn', type: 'number', min: 1, step: 1, help: 'How many pages turn by themselves before your month (one per second).' },
       { path: 'event.weekStartsMonday', label: 'Week starts on Monday', type: 'toggle' },
+      { path: 'event.heartTilt', label: 'Heart tilt (degrees)', type: 'number', step: 5, help: 'How much the heart around your date leans. 35 = to the right, -35 = to the left, 0 = straight.' },
       { path: 'event.pearls', label: 'Decoration beside the calendar', type: 'image', wide: true },
       { path: 'event.dateText', label: 'Date as written', type: 'text' },
       { path: 'event.timeText', label: 'Line under the date', type: 'text' },

@@ -55,6 +55,7 @@
     document.body.classList.toggle('names-gold', t.namesStyle === 'gold');
     document.body.classList.toggle('show-caret', !!t.typingCursor);
     document.body.classList.toggle('no-seconds', !get('closing.showSeconds'));
+    root.style.setProperty('--heart-tilt', (Number(get('event.heartTilt')) || 0) + 'deg');
     const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont, 'Albert Sans']);
     if ($('#fontsLink').href !== furl) $('#fontsLink').href = furl;
     const tc = $('meta[name="theme-color"]'); if (tc) tc.content = t.background || '#1c0508';
@@ -355,9 +356,13 @@
       for (let i = 0; i < offset; i++) grid.append(el('div', ''));
       for (let i = 1; i <= days; i++) {
         const dow = new Date(y, m, i).getDay();
-        const c = el('div', 'd' + (dow === 0 || dow === 6 ? ' we' : ''), nf.format(i));
+        const c = el('div', 'd' + (dow === 0 || dow === 6 ? ' we' : ''));
+        const num = el('span', 'num', nf.format(i));
+        c.append(num);
         if (k === n - 1 && i === d.getDate()) {
-          c.insertAdjacentHTML('beforeend', '<svg class="page__ring" viewBox="0 0 36 34" aria-hidden="true"><path pathLength="100" d="M18 31.5C11 26.5 2.5 20.5 2.5 11.8 2.5 6.4 6.5 2.5 11.2 2.5c3 0 5.4 1.6 6.8 4.2 1.4-2.6 3.8-4.2 6.8-4.2 4.7 0 8.7 3.9 8.7 9.3 0 8.7-8.5 14.7-15.5 19.7Z"/></svg>');
+          // the heart is attached to the number itself, so it always sits around it
+          num.insertAdjacentHTML('afterbegin', '<svg class="page__ring" viewBox="0 0 36 34" aria-hidden="true"><path pathLength="100" d="M18 31.5C11 26.5 2.5 20.5 2.5 11.8 2.5 6.4 6.5 2.5 11.2 2.5c3 0 5.4 1.6 6.8 4.2 1.4-2.6 3.8-4.2 6.8-4.2 4.7 0 8.7 3.9 8.7 9.3 0 8.7-8.5 14.7-15.5 19.7Z"/></svg>');
+          num.classList.add('is-day');
         }
         grid.append(c);
       }
