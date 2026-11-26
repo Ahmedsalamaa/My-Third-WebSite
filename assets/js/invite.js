@@ -31,11 +31,12 @@
 
   /* Names: capital Latin letters get their own, clearly capital script font (see theme.nameCapitals). */
   const NAME_SEL = '.hero__name, .letter__sig, .until__names .script';
+  let capLetters = 'N';   // only these capitals get the other font (default: N, Corinthia's N looks like a small n)
   function setName(el, str) {
     el.textContent = '';
     String(str).split(/([A-Z])/).forEach((part) => {
       if (!part) return;
-      if (/^[A-Z]$/.test(part)) { const c = document.createElement('span'); c.className = 'cap'; c.textContent = part; el.append(c); }
+      if (/^[A-Z]$/.test(part) && capLetters.includes(part)) { const c = document.createElement('span'); c.className = 'cap'; c.textContent = part; el.append(c); }
       else el.append(document.createTextNode(part));
     });
   }
@@ -70,6 +71,9 @@
     root.style.setProperty('--heart-tilt', (Number(get('event.heartTilt')) || 0) + 'deg');
     const furl = S.fontsUrl([t.scriptFont, t.bodyFont, t.uiFont, 'Albert Sans', t.nameCapitals]);
     root.style.setProperty('--caps-font', t.nameCapitals ? `"${t.nameCapitals}", var(--script)` : 'inherit');
+    const CAP_SIZE = { 'Italianno': 1, 'Pinyon Script': .66, 'Great Vibes': .78, 'Parisienne': .72, 'Allura': .8 };
+    root.style.setProperty('--caps-size', (CAP_SIZE[t.nameCapitals] || .8) + 'em');
+    capLetters = String(t.nameCapitalLetters == null ? 'N' : t.nameCapitalLetters).replace(/[^A-Za-z]/g, '').toUpperCase();
     root.classList.toggle('has-name-caps', !!t.nameCapitals);
     if ($('#fontsLink').href !== furl) $('#fontsLink').href = furl;
     const tc = $('meta[name="theme-color"]'); if (tc) tc.content = t.background || '#1c0508';
