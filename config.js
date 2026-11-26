@@ -7,9 +7,9 @@ window.INVITE_CONFIG = {
     "letter",
     "event",
     "schedule",
+    "wishes",
     "venue",
     "dress",
-    "wishes",
     "faq",
     "rsvp",
     "closing"
@@ -145,7 +145,7 @@ window.INVITE_CONFIG = {
     "text": "Formal Evening Attire"
   },
   "wishes": {
-    "enabled": false,
+    "enabled": true,
     "title": "A few wishes",
     "items": [
       {
