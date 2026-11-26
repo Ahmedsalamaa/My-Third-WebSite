@@ -155,7 +155,11 @@
     const tl = $('#timeline');
     tl.innerHTML = '';
     (get('schedule.items') || []).forEach((it) => {
-      const li = el('li', '', el('time', '', it.time), el('div', 'tl__body', el('b', '', it.title), el('span', '', it.text)));
+      // keep "07:00 PM" on one line; AM/PM a little smaller
+      const tm = el('time', '');
+      const m = String(it.time || '').match(/^\s*(.*?)\s*(AM|PM|ص|م)\s*$/i);
+      if (m) { tm.append(m[1]); tm.append(el('small', '', m[2])); } else tm.textContent = it.time || '';
+      const li = el('li', '', tm, el('div', 'tl__body', el('b', '', it.title), el('span', '', it.text)));
       tl.append(li); observe(li);
     });
 
@@ -870,6 +874,20 @@
     titles.forEach((t) => tio.observe(t));
   }
 
+  /* the evening: the line beside the moments fills as the guest scrolls through it */
+  function watchTimeline() {
+    const tl = $('#timeline');
+    const upd = () => {
+      const r = tl.getBoundingClientRect();
+      if (!r.height) return;
+      const p = Math.max(0, Math.min(1, (innerHeight * 0.62 - r.top) / r.height));
+      tl.style.setProperty('--tl-p', p.toFixed(4));
+    };
+    addEventListener('scroll', () => requestAnimationFrame(upd), { passive: true });
+    addEventListener('resize', upd);
+    upd();
+  }
+
   function watchCue() {
     const upd = () => document.body.classList.toggle('cue-off', scrollY > innerHeight * 0.25 || document.body.classList.contains('is-locked'));
     addEventListener('scroll', upd, { passive: true });
@@ -881,6 +899,7 @@
     startTitles();
     watchFlip();
     watchCue();
+    watchTimeline();
     if (!('IntersectionObserver' in window) || reduceMotion) { $$('.reveal, .timeline li').forEach((e) => e.classList.add('in')); return; }
     io = new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });

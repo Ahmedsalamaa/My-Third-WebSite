@@ -387,12 +387,30 @@ main { position: relative; z-index: 1; }
 .paper-sec > *:not(.lace):not(.emboss) { position: relative; }
 
 .timeline { list-style: none; margin: 48px auto 0; padding: 0; max-width: 360px; text-align: start; }
-.timeline li { display: grid; grid-template-columns: 74px 1fr; column-gap: 22px; }
+.timeline li { display: grid; grid-template-columns: 92px 1fr; column-gap: 14px; }
 .timeline time { font-size: 24px; color: var(--ink); padding-top: 6px; }
 .timeline .tl__body { position: relative; padding: 0 0 38px 22px; border-inline-start: 1px solid color-mix(in srgb, var(--ink) 30%, transparent); opacity: .35; transition: opacity 1.2s ease; }
 .timeline li.in .tl__body { opacity: 1; }
 .timeline b { display: block; font-family: var(--script); font-weight: 400; font-size: calc(30px * var(--script-scale)); line-height: 1.1; color: var(--ink); }
 .timeline span { display: block; font-size: 17px; color: #3b0710; opacity: .8; }
+/* glowing line that fills with the scroll (down fills, up empties) */
+.timeline { position: relative; --tl-x: calc(92px + 14px); }
+.timeline::after {
+  content: ""; position: absolute; top: 0; inset-inline-start: calc(var(--tl-x) - 1px); width: 2px; border-radius: 2px; pointer-events: none;
+  height: calc(var(--tl-p, 0) * 100%);
+  background: linear-gradient(var(--ink), color-mix(in srgb, var(--ink) 70%, #ff6a7a));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--ink) 70%, transparent), 0 0 14px color-mix(in srgb, #ff6a7a 45%, transparent);
+  animation: tlGlow 2.6s ease-in-out infinite;
+}
+.timeline::before {
+  content: ""; position: absolute; z-index: 1; inset-inline-start: calc(var(--tl-x) - 4.5px); top: calc(var(--tl-p, 0) * 100% - 4.5px);
+  width: 9px; height: 9px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 40% 35%, #fff 0, #ffd6da 35%, var(--ink) 100%);
+  box-shadow: 0 0 8px 2px color-mix(in srgb, #ff6a7a 70%, transparent), 0 0 18px 4px color-mix(in srgb, var(--ink) 45%, transparent);
+  opacity: calc(min(1, var(--tl-p, 0) * 20));
+}
+@keyframes tlGlow { 50% { box-shadow: 0 0 9px color-mix(in srgb, var(--ink) 85%, transparent), 0 0 22px color-mix(in srgb, #ff6a7a 65%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .timeline::after { animation: none; } }
 
 .wishes { display: grid; gap: 26px; max-width: 360px; margin: 44px auto 0; }
 .wishes .card b { display: block; font-family: var(--script); font-weight: 400; font-size: calc(32px * var(--script-scale)); line-height: 1.1; color: var(--ink); margin-bottom: 8px; }
@@ -550,7 +568,8 @@ html[dir="rtl"] .music-btn { right: auto; left: 16px; }
 .when__note { font-size: 19px; line-height: 1.45; }
 
 /* the evening */
-.timeline time { font: 400 26px/1 var(--ui); }
+.timeline time { font: 400 22px/1 var(--ui); white-space: nowrap; letter-spacing: -.01em; }
+.timeline time small { font-size: .62em; letter-spacing: .04em; margin-inline-start: .18em; }
 .timeline b { font-size: calc(42px * var(--ss)); line-height: .95; }
 .timeline span { font-size: 17px; line-height: 1.45; }
 
