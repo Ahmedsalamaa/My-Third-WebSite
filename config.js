@@ -98,7 +98,7 @@ window.INVITE_CONFIG = {
     "subtitle": "Turn the pages to our day",
     "padLabel": "A & N",
     "pearls": "assets/media/pearls-strand.webp",
-    "monthsToFlip": 4,
+    "monthsToFlip": 3,
     "heartTilt": 35,
     "weekStartsMonday": false,
     "dateText": "Thursday, 3 December 2026",
