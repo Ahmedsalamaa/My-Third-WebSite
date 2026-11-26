@@ -222,17 +222,26 @@ html[dir="rtl"] .caps { letter-spacing: 0; }
 .fade-wait { opacity: 0; transform: translateY(6px); transition: opacity 1s ease, transform 1.2s var(--ease); }
 .fade-wait.fade-in { opacity: 1; transform: none; }
 .show-caret .caret { display: inline-block; }
-.hero__scroll {
-  position: absolute; z-index: 4; left: 0; right: 0; top: calc(100svh - env(safe-area-inset-bottom) - 74px);
-  margin: 0; text-align: center; font-style: italic; font-size: 15px; color: #fff0e6; opacity: 0;
+/* scroll cue: italic words, a thin gold thread with a pearl gliding down it, a fine chevron */
+.cue {
+  position: fixed; z-index: 30; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 20px); transform: translate(-50%, 8px);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
+  opacity: 0; transition: opacity .9s ease, transform .9s var(--ease);
 }
-.hero__scroll::after {
-  content: ""; display: block; width: 1px; height: 26px; margin: 6px auto 0;
-  background: linear-gradient(var(--accent), transparent); animation: drip 2s ease-in-out infinite;
+body.is-typed:not(.cue-off) .cue { opacity: 1; transform: translate(-50%, 0); }
+.cue__text { font: italic 400 15px/1 var(--body); letter-spacing: .06em; color: var(--pearl); text-shadow: 0 2px 10px rgba(20, 0, 4, .9); }
+.cue__line { position: relative; width: 1px; height: 40px; background: linear-gradient(color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 70%, transparent)); }
+.cue__pearl {
+  position: absolute; left: 50%; top: 0; width: 7px; height: 7px; margin-left: -3.5px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0, #f1e8df 45%, #b9aa9b 100%);
+  box-shadow: 0 0 8px rgba(255, 238, 220, .7); animation: cueDrop 2.4s cubic-bezier(.45, 0, .35, 1) infinite;
 }
+@keyframes cueDrop { 0% { top: -2px; opacity: 0; } 15% { opacity: 1; } 75% { top: 34px; opacity: 1; } 100% { top: 38px; opacity: 0; } }
+.cue__chev { width: 9px; height: 9px; margin-top: -7px; border-right: 1px solid var(--accent); border-bottom: 1px solid var(--accent); transform: rotate(45deg); opacity: .85; animation: cueChev 2.4s ease-in-out infinite; }
+@keyframes cueChev { 0%, 60% { opacity: .35; } 80% { opacity: 1; } 100% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .cue__pearl, .cue__chev { animation: none; } }
 @keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
 
-.is-typed .hero__scroll { animation: fadeIn 1.4s ease forwards; }
 @keyframes letter { to { opacity: 1; transform: none; filter: none; } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes fadeIn { to { opacity: 1; } }
@@ -298,9 +307,9 @@ main { position: relative; z-index: 1; }
 .letter__sig { margin: 0; font-size: calc(30px * var(--script-scale)); line-height: 1.05; }
 
 /* ---------- Save the date: turning calendar pages ---------- */
-.flip { position: relative; height: var(--flip-h, 330svh); }
+.flip { position: relative; }
 .flip__sticky {
-  position: sticky; top: 0; height: 100svh; overflow: hidden;
+  position: relative; min-height: 100svh; padding-top: 70px !important; padding-bottom: 70px !important; overflow: hidden;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 0 20px; text-align: center;
 }
@@ -342,9 +351,9 @@ main { position: relative; z-index: 1; }
 .page__grid .wd { font-family: "Albert Sans", sans-serif; font-size: 9px; letter-spacing: .1em; opacity: .55; padding-bottom: 8px; }
 .page__grid .we { color: var(--ink); }
 .page__grid .d { position: relative; height: 28px; display: grid; place-items: center; }
-.page__ring { position: absolute; width: 30px; height: 30px; left: 50%; top: 50%; transform: translate(-50%, -50%); overflow: visible; }
-.page__ring circle { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 90; stroke-dashoffset: 90; transition: stroke-dashoffset 1.2s var(--ease) .2s; }
-.flip.is-done .page__ring circle { stroke-dashoffset: 0; }
+.page__ring { position: absolute; width: 36px; height: 34px; left: 50%; top: 50%; transform: translate(-50%, -46%); overflow: visible; pointer-events: none; }
+.page__ring path { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.6s cubic-bezier(.6, .05, .3, 1) .25s, fill .8s ease 1.6s; }
+.flip.is-done .page__ring path { stroke-dashoffset: 0; fill: color-mix(in srgb, var(--ink) 10%, transparent); }
 
 .when { position: relative; z-index: 3; text-align: center; margin-top: 30px; opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .9s var(--ease); pointer-events: none; }
 .flip.is-done .when { opacity: 1; transform: none; pointer-events: auto; }

@@ -357,7 +357,7 @@
         const dow = new Date(y, m, i).getDay();
         const c = el('div', 'd' + (dow === 0 || dow === 6 ? ' we' : ''), nf.format(i));
         if (k === n - 1 && i === d.getDate()) {
-          c.insertAdjacentHTML('beforeend', '<svg class="page__ring" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13.5"/></svg>');
+          c.insertAdjacentHTML('beforeend', '<svg class="page__ring" viewBox="0 0 36 34" aria-hidden="true"><path pathLength="100" d="M18 31.5C11 26.5 2.5 20.5 2.5 11.8 2.5 6.4 6.5 2.5 11.2 2.5c3 0 5.4 1.6 6.8 4.2 1.4-2.6 3.8-4.2 6.8-4.2 4.7 0 8.7 3.9 8.7 9.3 0 8.7-8.5 14.7-15.5 19.7Z"/></svg>');
         }
         grid.append(c);
       }
@@ -371,29 +371,41 @@
       box.append(page);
       flipPages.push(page);
     }
-    $('#flip').style.setProperty('--flip-h', (100 + (n - 1) * 55 + 100) + 'svh');
-    updateFlip();
+    showFlip(flipTop);
   }
 
-  function updateFlip() {
-    const sec = $('#flip');
-    if (!flipPages.length || sec.classList.contains('is-off')) return;
-    const r = sec.getBoundingClientRect();
-    const span = sec.offsetHeight - innerHeight;
-    const prog = Math.max(0, Math.min(1, -r.top / Math.max(1, span)));
+  /* The calendar turns by itself once it is on screen: one page about every second
+   * until the wedding month, then the heart is drawn around the day. */
+  let flipTop = 0, flipStarted = false, flipTimer = null;
+  function showFlip(top) {
     const n = flipPages.length;
-    // like the original: each page flips away quickly once the scroll passes its step,
-    // and the page underneath starts shadowed, then brightens
-    const top = Math.min(n - 1, Math.floor(prog * 1.18 * (n - 1) + 0.1));   // last month reached at ~80% of the scroll
+    if (!n) return;
+    flipTop = Math.min(top, n - 1);
     flipPages.forEach((pg, k) => {
-      pg.classList.toggle('is-turned', k < top);
-      if (k > top) pg.classList.add('is-under');
-      else if (k === top && pg.classList.contains('is-under')) requestAnimationFrame(() => pg.classList.remove('is-under'));
+      pg.classList.toggle('is-turned', k < flipTop);
+      if (k > flipTop) pg.classList.add('is-under');
+      else if (k === flipTop && pg.classList.contains('is-under')) requestAnimationFrame(() => pg.classList.remove('is-under'));
     });
-    sec.classList.toggle('is-done', top === n - 1 && prog > 0.8);
+    if (flipTop === n - 1 && flipStarted) setTimeout(() => $('#flip').classList.add('is-done'), 450);
   }
-  addEventListener('scroll', () => requestAnimationFrame(updateFlip), { passive: true });
-  addEventListener('resize', updateFlip);
+  function runFlip() {
+    if (flipStarted) return;
+    flipStarted = true;
+    const next = () => {
+      if (flipTop >= flipPages.length - 1) { showFlip(flipTop); return; }
+      showFlip(flipTop + 1);
+      flipTimer = setTimeout(next, 950);
+    };
+    flipTimer = setTimeout(next, 700);
+  }
+  function watchFlip() {
+    const sec = $('#flip');
+    if (reduceMotion || !('IntersectionObserver' in window)) { flipStarted = true; showFlip(99); return; }
+    const fio = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { runFlip(); fio.disconnect(); } });
+    }, { threshold: 0.55 });
+    fio.observe(sec.querySelector('.pad'));
+  }
 
   /* ---------------- countdown ---------------- */
   function tickCountdown() {
@@ -822,8 +834,17 @@
     titles.forEach((t) => tio.observe(t));
   }
 
+  function watchCue() {
+    const upd = () => document.body.classList.toggle('cue-off', scrollY > innerHeight * 0.25 || document.body.classList.contains('is-locked'));
+    addEventListener('scroll', upd, { passive: true });
+    new MutationObserver(upd).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    upd();
+  }
+
   function startReveal() {
     startTitles();
+    watchFlip();
+    watchCue();
     if (!('IntersectionObserver' in window) || reduceMotion) { $$('.reveal, .timeline li').forEach((e) => e.classList.add('in')); return; }
     io = new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
