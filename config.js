@@ -3,7 +3,17 @@
  * You can also edit it by hand: every text, photo and setting of the invitation lives here.
  */
 window.INVITE_CONFIG = {
-  "order": ["letter", "event", "schedule", "venue", "dress", "wishes", "faq", "rsvp", "closing"],
+  "order": [
+    "letter",
+    "event",
+    "schedule",
+    "venue",
+    "dress",
+    "wishes",
+    "faq",
+    "rsvp",
+    "closing"
+  ],
   "meta": {
     "title": "Ahmed & Nada · Wedding Invitation",
     "description": "You are invited to the wedding of Ahmed & Nada",
@@ -18,7 +28,7 @@ window.INVITE_CONFIG = {
     "text": "#f7eee6",
     "ink": "#8f1426",
     "paper": "#f6eee5",
-    "scriptFont": "Playfair Display",
+    "scriptFont": "Corinthia",
     "bodyFont": "Cormorant Garamond",
     "uiFont": "Gilda Display",
     "namesStyle": "pearl",
