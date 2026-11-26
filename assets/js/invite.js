@@ -89,6 +89,16 @@
     });
     paintCurtains();
 
+    // sections in the order chosen in the dashboard (the cover and the stage always come first)
+    const ALL = ["letter", "event", "schedule", "venue", "dress", "wishes", "faq", "rsvp", "closing"];
+    const order = (Array.isArray(get('order')) ? get('order') : []).filter((k) => ALL.includes(k));
+    ALL.forEach((k) => { if (!order.includes(k)) order.push(k); });
+    const main = $('#main'), foot = main.querySelector('.foot');
+    order.forEach((k) => {
+      const sec = main.querySelector(`:scope > [data-section="${k}"]`);
+      if (sec) main.insertBefore(sec, foot);
+    });
+
     // sections on/off
     $$('[data-section]').forEach((el) => {
       const on = get(el.dataset.section + '.enabled');

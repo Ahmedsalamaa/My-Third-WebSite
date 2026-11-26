@@ -3,6 +3,7 @@
  * You can also edit it by hand: every text, photo and setting of the invitation lives here.
  */
 window.INVITE_CONFIG = {
+  "order": ["letter", "event", "schedule", "venue", "dress", "wishes", "faq", "rsvp", "closing"],
   "meta": {
     "title": "Ahmed & Nada · Wedding Invitation",
     "description": "You are invited to the wedding of Ahmed & Nada",
