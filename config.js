@@ -32,6 +32,7 @@ window.INVITE_CONFIG = {
     "bodyFont": "Cormorant Garamond",
     "uiFont": "Gilda Display",
     "namesStyle": "pearl",
+    "nameCapitals": "Pinyon Script",
     "typingCursor": false,
     "paperTexture": "assets/media/emboss.jpg",
     "laceTrim": "assets/media/lace-trim.webp"

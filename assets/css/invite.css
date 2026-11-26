@@ -491,6 +491,10 @@ html[dir="rtl"] .music-btn { right: auto; left: 16px; }
   .reveal { transition: none; opacity: 1; transform: none; }
 }
 
+/* clearly capital first letters on the names (Corinthia's capitals look like small letters);
+   sized for Pinyon Script next to Corinthia, and kept in proportion for other script fonts */
+.has-name-caps .cap { font-family: var(--caps-font); font-style: normal; font-weight: 400; font-size: calc(.66em * 1.35 / var(--script-scale, 1.35)); line-height: 1; }
+
 /* titles write themselves; the line under them waits, then fades in */
 .title.to-write:not(.is-written):not(.is-writing) { color: transparent; }
 .title.to-write.reveal { opacity: 1; transform: none; }

@@ -167,6 +167,7 @@
       { path: 'theme.paper', label: 'Paper', type: 'color' },
       { path: 'theme.namesStyle', label: 'Names color', type: 'select', options: [['pearl', 'Pearl white with glow (original)'], ['gold', 'Gold']] },
       { path: 'theme.scriptFont', label: 'Names & titles font', type: 'font' },
+      { path: 'theme.nameCapitals', label: 'Capital letters of the names', type: 'select', options: [['Pinyon Script', 'Pinyon Script (clear capitals)'], ['Great Vibes', 'Great Vibes'], ['', 'Same as names font']] },
       { path: 'theme.bodyFont', label: 'Text font', type: 'font' },
       { path: 'theme.uiFont', label: 'Date & small caps font', type: 'font' },
       { path: 'theme.typingCursor', label: 'Show typing cursor on the names', type: 'toggle' },
