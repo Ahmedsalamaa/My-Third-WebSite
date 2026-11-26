@@ -177,6 +177,16 @@
     }
 
     $('#schedNote').classList.toggle('is-off', !get('schedule.note'));
+    // split the note into words so they can appear one by one
+    const nt = $('#schedNote .sched-note__text');
+    nt.textContent = '';
+    String(get('schedule.note') || '').split(/(\s+)/).forEach((w, i) => {
+      if (/^\s+$/.test(w)) { nt.append(w); return; }
+      if (!w) return;
+      const s = el('span', 'w', w);
+      s.style.transitionDelay = (1.1 + i * 0.06) + 's';
+      nt.append(s);
+    });
 
     // a few wishes
     const wl = $('#wishList');
@@ -890,6 +900,13 @@
     upd();
   }
 
+  function watchNote() {
+    const n = $('#schedNote');
+    if (reduceMotion || !('IntersectionObserver' in window)) { n.classList.add('on'); return; }
+    const nio = new IntersectionObserver((en) => { if (en[0].isIntersecting) { n.classList.add('on'); nio.disconnect(); } }, { threshold: 0.6 });
+    nio.observe(n);
+  }
+
   function watchCue() {
     const upd = () => document.body.classList.toggle('cue-off', scrollY > innerHeight * 0.25 || document.body.classList.contains('is-locked'));
     addEventListener('scroll', upd, { passive: true });
@@ -902,6 +919,7 @@
     watchFlip();
     watchCue();
     watchTimeline();
+    watchNote();
     if (!('IntersectionObserver' in window) || reduceMotion) { $$('.reveal, .timeline li').forEach((e) => e.classList.add('in')); return; }
     io = new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
