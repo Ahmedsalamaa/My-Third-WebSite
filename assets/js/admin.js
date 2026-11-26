@@ -156,6 +156,7 @@
       { path: 'closing.backdrop', label: 'Background picture', type: 'image', wide: true, help: 'e.g. the stage with red curtains. Empty = drawn curtains.' },
       { path: 'closing.footer', label: 'Small footer', type: 'text', wide: true }
     ] },
+    { id: 'order', icon: '↕️', title: 'Section order', desc: 'Move sections up or down. The glitter cover and the stage with your names always come first.', custom: renderOrder },
     { id: 'style', icon: '🎨', title: 'Colors & fonts', desc: 'The look of the whole invitation.', presets: true, fields: [
       { path: 'theme.accent', label: 'Gold (main accent)', type: 'color' },
       { path: 'theme.accent2', label: 'Gold (shadow)', type: 'color' },
@@ -442,6 +443,47 @@
     g.fields.forEach((f) => { if (!f.show || f.show(config)) fields.append(renderField(f)); });
     ed.append(el('div', { class: 'card' }, fields));
     ed.scrollTop = scroll;
+  }
+
+  /* ---------------- section order ---------------- */
+  const SECTION_NAMES = {
+    letter: ['💌', 'Letter'], event: ['📅', 'Save the date'], schedule: ['🕰️', 'The evening'], venue: ['📍', 'Where'],
+    dress: ['👗', 'Dress code'], wishes: ['🎁', 'A few wishes'], faq: ['❓', 'Questions'], rsvp: ['✉️', 'RSVP'], closing: ['🌹', 'Until we meet']
+  };
+  const DEFAULT_ORDER = Object.keys(SECTION_NAMES);
+  function currentOrder() {
+    const o = (Array.isArray(get('order')) ? get('order') : []).filter((k) => SECTION_NAMES[k]);
+    DEFAULT_ORDER.forEach((k) => { if (!o.includes(k)) o.push(k); });
+    return o;
+  }
+  function renderOrder(ed) {
+    const order = currentOrder();
+    const move = (i, d) => {
+      const o = order.slice();
+      const j = i + d;
+      if (j < 0 || j >= o.length) return;
+      [o[i], o[j]] = [o[j], o[i]];
+      set('order', o, true);
+      setTimeout(() => {   // show the moved section in the preview
+        try { const t = frame.contentDocument.querySelector(`[data-section="${o[j]}"]`); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { /* ignore */ }
+      }, 450);
+    };
+    const list = el('ol', { class: 'order' },
+      el('li', { class: 'order__fixed' }, el('span', { class: 'order__ico' }, '✨'), el('span', { class: 'order__name' }, 'Glitter cover & stage'), el('span', { class: 'order__tag' }, 'always first')),
+      order.map((k, i) => {
+        const [ico, name] = SECTION_NAMES[k];
+        const hidden = get((k === 'event' ? 'event' : k) + '.enabled') === false;
+        return el('li', { class: 'order__item' + (hidden ? ' is-hidden' : '') },
+          el('span', { class: 'order__num' }, String(i + 1)),
+          el('span', { class: 'order__ico' }, ico),
+          el('span', { class: 'order__name' }, name, hidden ? el('small', {}, ' · hidden') : null),
+          el('button', { class: 'btn btn--sm', type: 'button', title: 'Move up', 'aria-label': 'Move ' + name + ' up', disabled: i === 0, onclick: () => move(i, -1) }, '▲'),
+          el('button', { class: 'btn btn--sm', type: 'button', title: 'Move down', 'aria-label': 'Move ' + name + ' down', disabled: i === order.length - 1, onclick: () => move(i, 1) }, '▼'));
+      }));
+    ed.append(el('div', { class: 'card' }, list,
+      el('div', { class: 'row', style: 'margin-top:14px' },
+        el('button', { class: 'btn btn--sm', type: 'button', onclick: () => { set('order', DEFAULT_ORDER.slice(), true); toast('Original order restored'); } }, '↺ Original order')),
+      el('p', { class: 'help', style: 'margin:12px 0 0' }, 'Tip: to remove a section completely, open it and switch off “Show this section”. Press Publish to put the new order online.')));
   }
 
   /* ---------------- backup (export / import) ---------------- */
