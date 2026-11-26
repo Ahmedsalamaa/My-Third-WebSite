@@ -62,7 +62,7 @@ window.INVITE_CONFIG = {
     "invite": "invite you to celebrate their wedding",
     "dateLine": "03 12 2026",
     "place": "Hayah Hall, Cairo",
-    "scrollHint": "",
+    "scrollHint": "scroll down",
     "curtains": true,
     "beam": false,
     "ring": false,
