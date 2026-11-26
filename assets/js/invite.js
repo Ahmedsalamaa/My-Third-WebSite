@@ -155,7 +155,11 @@
     const tl = $('#timeline');
     tl.innerHTML = '';
     (get('schedule.items') || []).forEach((it) => {
-      const li = el('li', '', el('time', '', it.time), el('div', 'tl__body', el('b', '', it.title), el('span', '', it.text)));
+      // keep "07:00 PM" on one line; AM/PM a little smaller
+      const tm = el('time', '');
+      const m = String(it.time || '').match(/^\s*(.*?)\s*(AM|PM|ص|م)\s*$/i);
+      if (m) { tm.append(m[1]); tm.append(el('small', '', m[2])); } else tm.textContent = it.time || '';
+      const li = el('li', '', tm, el('div', 'tl__body', el('b', '', it.title), el('span', '', it.text)));
       tl.append(li); observe(li);
     });
 
