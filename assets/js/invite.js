@@ -882,6 +882,8 @@
       if (!r.height) return;
       const p = Math.max(0, Math.min(1, (innerHeight * 0.62 - r.top) / r.height));
       tl.style.setProperty('--tl-p', p.toFixed(4));
+      const reach = p * r.height;
+      tl.querySelectorAll('li').forEach((li) => li.classList.toggle('lit', reach > li.offsetTop + 10));
     };
     addEventListener('scroll', () => requestAnimationFrame(upd), { passive: true });
     addEventListener('resize', upd);
