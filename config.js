@@ -188,10 +188,10 @@ window.INVITE_CONFIG = {
     "guestsPlaceholder": "Number of guests",
     "messagePlaceholder": "Your message to the couple",
     "button": "Send RSVP",
-    "method": "whatsapp",
+    "method": "endpoint",
     "whatsapp": "",
     "email": "",
-    "endpoint": "",
+    "endpoint": "https://script.google.com/macros/s/AKfycbyFFro_oTlwqvZsGiv1L4ayfioskQX5dbWqiIqp5gXTR9BE_F9JKC9IdwG0zhr5dKYwIg/exec",
     "deadline": "",
     "thanks": "Thank you! Your reply has been sent.",
     "missing": "Please write your name and choose an answer."
