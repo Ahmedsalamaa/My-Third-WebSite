@@ -389,7 +389,7 @@ main { position: relative; z-index: 1; }
 .timeline { list-style: none; margin: 48px auto 0; padding: 0; max-width: 360px; text-align: start; }
 .timeline li { display: grid; grid-template-columns: 92px 1fr; column-gap: 14px; }
 .timeline time { font-size: 24px; color: var(--ink); padding-top: 6px; }
-.timeline .tl__body { position: relative; padding: 0 0 38px 22px; opacity: .3; transition: opacity .7s ease; }
+.timeline .tl__body { position: relative; padding: 0 0 38px 0; padding-inline-start: 22px; opacity: .3; transition: opacity .7s ease; }
 .timeline li.lit .tl__body { opacity: 1; }
 .timeline b { display: block; font-family: var(--script); font-weight: 400; font-size: calc(30px * var(--script-scale)); line-height: 1.1; color: var(--ink); }
 .timeline span { display: block; font-size: 17px; color: #3b0710; opacity: .8; }
@@ -515,6 +515,13 @@ html[dir="rtl"] .music-btn { right: auto; left: 16px; }
 .sched-note__text .w { display: inline-block; opacity: 0; transform: translateY(6px); filter: blur(3px); transition: opacity .7s ease, transform .8s var(--ease), filter .7s ease; }
 .sched-note.on .sched-note__text .w { opacity: 1; transform: none; filter: none; }
 @media (prefers-reduced-motion: reduce) { .sched-note * { transition: none !important; } }
+
+/* Arabic version: Arabic letters must stay joined (no letter spacing) and have no italic style */
+html[lang^="ar"] body, html[lang^="ar"] body * { letter-spacing: 0 !important; font-style: normal !important; }
+html[lang^="ar"] .hero__name { line-height: 1.25; }
+html[lang^="ar"] .title, html[lang^="ar"] .until__names .script, html[lang^="ar"] .letter__sig, html[lang^="ar"] .timeline b, html[lang^="ar"] .wishes .card b { line-height: 1.45; }
+html[lang^="ar"] .cover__action { line-height: 1.3; }
+html[lang^="ar"] .hero__date, html[lang^="ar"] .cover__mono, html[lang^="ar"] .pad__head { word-spacing: .35em; }
 
 /* titles write themselves; the line under them waits, then fades in */
 .title.to-write:not(.is-written):not(.is-writing) { color: transparent; }

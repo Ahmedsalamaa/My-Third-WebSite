@@ -4,6 +4,7 @@
  */
 (function () {
   const DB_NAME = 'invite-dashboard';
+  const DRAFT_KEY = window.INVITE_SITE ? window.INVITE_SITE + ':draft' : 'draft';   // each language version keeps its own draft
   const DB_VERSION = 1;
   let dbPromise = null;
 
@@ -119,17 +120,18 @@
      * Old drafts (a full copy of every setting) are ignored: they would undo newer designs. */
     async loadDraft() {
       const base = window.INVITE_CONFIG || {};
-      const draft = await Store.get('draft');
+      const draft = await Store.get(DRAFT_KEY);
       if (draft && draft.v === 2) return Store.merge(base, draft.changes || {});
-      if (draft) await Store.del('draft').catch(() => {});
+      if (draft) await Store.del(DRAFT_KEY).catch(() => {});
       return Store.clone(base);
     },
     async draftChanges() {
-      const draft = await Store.get('draft');
+      const draft = await Store.get(DRAFT_KEY);
       return draft && draft.v === 2 ? (draft.changes || {}) : {};
     },
+    clearDraft() { return Store.del(DRAFT_KEY); },
     saveDraft(config) {
-      return Store.set('draft', { v: 2, changes: Store.diff(window.INVITE_CONFIG || {}, config) || {} });
+      return Store.set(DRAFT_KEY, { v: 2, changes: Store.diff(window.INVITE_CONFIG || {}, config) || {} });
     }
   };
 

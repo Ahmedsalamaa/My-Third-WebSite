@@ -385,7 +385,7 @@
     const n = Math.max(1, Math.min(12, Number(get('event.monthsToFlip')) || 5));
     const monStart = get('event.weekStartsMonday') !== false;
     const ar = lang.startsWith('ar');
-    let nf; try { nf = new Intl.NumberFormat(lang); } catch (e) { nf = { format: String }; }
+    let nf; try { nf = new Intl.NumberFormat(lang, { useGrouping: false }); } catch (e) { nf = { format: String }; }
     const fmt = (o, dt) => { try { return new Intl.DateTimeFormat(lang, o).format(dt); } catch (e) { return ''; } };
     for (let k = 0; k < n; k++) {
       const md = new Date(d.getFullYear(), d.getMonth() - (n - 1 - k), 1);
@@ -486,7 +486,7 @@
       'DTSTART:' + f(d), 'DTEND:' + f(end),
       'SUMMARY:' + esc(get('meta.title') || names),
       'LOCATION:' + esc([get('venue.name'), get('venue.address')].filter(Boolean).join(', ')),
-      'DESCRIPTION:' + esc(location.href.split('?')[0]),
+      'DESCRIPTION:' + esc(location.href.replace(/[?&](preview|skipIntro|v|t)=?[^&]*/g, '')),
       'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(names), 'END:VALARM',
       'END:VEVENT', 'END:VCALENDAR'
     ].join('\r\n');
