@@ -193,6 +193,10 @@
     { name: 'Blush', c: { accent: '#d9a98a', accent2: '#f6d9c6', background: '#2a0f16', background2: '#5c2232', text: '#fbeee8', ink: '#9a3550', paper: '#f8eeea' }, glitter: '#d2607b' }
   ];
 
+  const SITE = window.INVITE_SITE || '';
+  const CONFIG_FILE = window.INVITE_CONFIG_FILE || 'config.js';
+  const page = (q) => 'index.html?' + q + (SITE ? '&site=' + SITE : '');
+
   let config = null;
   let current = 'couple';
   const frame = $('#previewFrame');
@@ -425,7 +429,7 @@
       const doc = frame.contentDocument;
       const target = g.section ? doc.querySelector(`[data-section="${g.section}"]`) : g.id === 'couple' ? doc.querySelector('#hero') : null;
       if (target && !target.classList.contains('is-off')) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      if (g.id === 'opening') frame.src = 'index.html?preview';
+      if (g.id === 'opening') frame.src = page('preview');
     } catch (e) { /* ignore */ }
   }
 
@@ -557,7 +561,7 @@
   /* Read the newest config.js straight from GitHub, so publishing never undoes newer design updates. */
   async function ghReadConfig(gh) {
     try {
-      const api = `https://api.github.com/repos/${encodeURIComponent(gh.owner)}/${encodeURIComponent(gh.repo)}/contents/config.js?ref=${encodeURIComponent(gh.branch)}`;
+      const api = `https://api.github.com/repos/${encodeURIComponent(gh.owner)}/${encodeURIComponent(gh.repo)}/contents/${CONFIG_FILE}?ref=${encodeURIComponent(gh.branch)}`;
       const r = await fetch(api, { headers: { Authorization: 'Bearer ' + gh.token, Accept: 'application/vnd.github.raw+json', 'X-GitHub-Api-Version': '2022-11-28' }, cache: 'no-store' });
       if (!r.ok) return null;
       const src = await r.text();
@@ -597,12 +601,12 @@
         await ghPut(gh, path, await b64FromBlob(blob), 'Upload ' + name + ' from invitation dashboard');
         refs[ref].forEach((p) => { S.setPath(out, p, path); S.setPath(config, p, path); });
       }
-      say('Saving texts & settings (config.js)…');
+      say('Saving texts & settings (' + CONFIG_FILE + ')…');
       const changes = S.diff(window.INVITE_CONFIG, config) || {};
       const latest = (await ghReadConfig(gh)) || window.INVITE_CONFIG;
       const final = S.merge(latest, changes);
       const js = '/* Invitation content.\n * This file is written by the dashboard (admin.html → Publish).\n * You can also edit it by hand: every text, photo and setting of the invitation lives here.\n */\nwindow.INVITE_CONFIG = ' + JSON.stringify(final, null, 2) + ';\n';
-      await ghPut(gh, 'config.js', b64FromText(js), 'Update invitation from dashboard');
+      await ghPut(gh, CONFIG_FILE, b64FromText(js), 'Update ' + (SITE ? SITE + ' ' : '') + 'invitation from dashboard');
       window.INVITE_CONFIG = S.clone(final);   // published = new baseline, draft becomes empty
       config = S.clone(final);
       await S.saveDraft(config);
@@ -655,10 +659,10 @@
         el('p', { class: 'help', style: 'margin:0 0 12px' }, 'Throw away the unpublished changes in this browser and go back to the published invitation.'),
         el('button', { class: 'btn btn--danger', type: 'button', onclick: async () => {
           if (!confirm('Discard all unpublished changes?')) return;
-          await S.del('draft');
+          await S.clearDraft();
           config = S.clone(window.INVITE_CONFIG);
           changed(true);
-          frame.src = 'index.html?preview&skipIntro';
+          frame.src = page('preview&skipIntro');
           toast('Draft discarded');
         } }, 'Discard draft'))
     );
@@ -673,7 +677,12 @@
     renderEditor();
     frame.addEventListener('load', pushPreview);
 
-    $('#replayIntro').addEventListener('click', () => { frame.src = 'index.html?preview&t=' + Date.now(); });
+    $('#replayIntro').addEventListener('click', () => { frame.src = page('preview&t=' + Date.now()); });
+    frame.src = page('preview&skipIntro');
+    $('#openPreview').href = page('preview');
+    $('#switchLang').textContent = SITE ? 'English' : 'العربية';
+    $('#switchLang').href = SITE ? 'admin.html' : 'admin.html?site=ar';
+    if (SITE) document.querySelector('.brand h1').textContent = 'Invitation Dashboard · العربية';
     $('#publishTop').addEventListener('click', () => { current = 'publish'; updateNav(); renderEditor(); });
     $('#togglePreview').addEventListener('click', () => $('#previewPane').classList.toggle('is-shown'));
     $('#previewPane').addEventListener('click', (e) => { if (e.target.id === 'previewPane') e.currentTarget.classList.remove('is-shown'); });
